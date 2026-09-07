@@ -22,51 +22,51 @@ import { KIND_LABEL } from './hud.js';
 import { track, trackOnce, EVENTS } from './analytics.js';
 import { partMat } from './part-materials.js';
 
-// tray metadata (name/desc/help) per library type — the human-facing card copy.
+// 부품별 트레이 메타데이터(이름/설명/도움말) — 사람이 보는 카드 카피.
 const CARD = {
-  battery: { name: 'Battery', icon: 'battery-charging', swatch: '#3d5a8f', desc: 'Gives your invention power',
-    help: 'The power source. Its + and − terminals push current through whatever you wire across them.' },
-  motor: { name: 'Motor + Wheel', icon: 'settings', swatch: '#f0c020', desc: 'Turns electricity into motion',
-    help: 'Current through A→B makes it spin. Reverse the wires and it spins the other way.' },
-  resistor: { name: 'Resistor', icon: 'activity', swatch: '#d8c9a0', desc: 'Keeps current under control',
-    help: 'Limits current. Put one in series with the motor and it draws less — the motor spins slower. Non-polar: either lead works.' },
-  switch: { name: 'Switch', icon: 'toggle-left', swatch: '#7bd88f', desc: 'Opens and closes the loop',
-    help: 'Click the switch body to open or close the circuit. Open = no current = the motor stops.' },
-  led: { name: 'LED', icon: 'lightbulb', swatch: '#ff5566', desc: 'Glows when current flows',
-    help: 'Polar: current only flows anode (A, long leg) → cathode (K). Wire it the right way and it glows; backwards it stays dark. Needs a resistor in series or it burns out.' },
-  potentiometer: { name: 'Power Knob', icon: 'gauge', swatch: '#8fb3ff', desc: 'Turn it to change resistance',
-    help: 'A variable resistor. Scroll on the knob (or edit R in the Inspector) to change its resistance live — turn it down and the motor speeds up / the LED brightens.' },
-  push_button: { name: 'Push Button', icon: 'circle-dot', swatch: '#7bd88f', desc: 'Works while you press it',
-    help: 'A momentary switch — conducts only while pressed. Great for triggering an action on demand.' },
-  lamp: { name: 'Lamp', icon: 'lamp-desk', swatch: '#ffd27a', desc: 'A warm, glowing bulb',
-    help: 'A filament bulb. Non-polar: current either way heats the filament and it glows brighter the more current flows.' },
-  buzzer: { name: 'Buzzer', icon: 'volume-2', swatch: '#3a3f4a', desc: 'Makes sound with electricity',
-    help: 'Makes a tone when current flows through it. Wire it across a source to hear it buzz.' },
-  diode: { name: 'Diode', icon: 'arrow-right', swatch: '#5a606c', desc: 'Lets current go one way',
-    help: 'Polar: current only flows anode (A) → cathode (K, the banded end). Blocks reverse current — a rectifier.' },
-  photoresistor: { name: 'Light Sensor', icon: 'sun', swatch: '#c9b063', desc: 'Reacts to brightness',
-    help: 'Its resistance drops as light hits its face. Non-polar — a light sensor for the circuit.' },
-  thermistor: { name: 'Heat Sensor', icon: 'thermometer', swatch: '#c86b4a', desc: 'Reacts to temperature',
-    help: 'Its resistance changes with temperature. Non-polar — a heat sensor for the circuit.' },
-  fuse: { name: 'Fuse', icon: 'shield-check', swatch: '#c9c9d0', desc: 'Protects the circuit',
-    help: 'A thin link that carries current until it exceeds the rated limit — protects the rest of the circuit.' },
-  capacitor: { name: 'Capacitor', icon: 'battery-medium', swatch: '#2a8f8f', desc: 'Stores a little charge',
-    help: 'Stores and releases charge. Smooths and buffers a circuit; blocks steady DC once charged.' },
-  servo: { name: 'Servo', icon: 'rotate-cw', swatch: '#4d7bd8', desc: 'Turns to an exact angle',
-    help: 'A geared motor that holds a commanded angle. Three wires: power, ground, and a signal line.' },
-  relay: { name: 'Relay', icon: 'workflow', swatch: '#3d5a8f', desc: 'A switch powered by a circuit',
-    help: 'An electrically-operated switch: energising its coil throws a separate, higher-power contact.' },
+  battery: { name: '건전지', icon: 'battery-charging', swatch: '#3d5a8f', desc: '발명에 전력을 공급',
+    help: '전원 공급원. +와 − 단자가 그 사이로 연결된 모든 것에 전류를 밀어 넣습니다.' },
+  motor: { name: '모터 + 바퀴', icon: 'settings', swatch: '#f0c020', desc: '전기를 회전으로 바꿔요',
+    help: 'A→B로 흐르는 전류가 모터를 회전시킵니다. 배선을 반대로 바꾸면 반대 방향으로 돕니다.' },
+  resistor: { name: '저항', icon: 'activity', swatch: '#d8c9a0', desc: '전류를 제어해 줘요',
+    help: '전류를 제한합니다. 모터와 직렬로 넣으면 더 적은 전류를 끌어다 쓰고 — 모터는 천천히 돕니다. 무극성이라 어느 리드든 됩니다.' },
+  switch: { name: '스위치', icon: 'toggle-left', swatch: '#7bd88f', desc: '회로를 열거나 닫아요',
+    help: '스위치 본체를 클릭해 회로를 여닫습니다. 열림 = 전류 없음 = 모터 정지.' },
+  led: { name: 'LED', icon: 'lightbulb', swatch: '#ff5566', desc: '전류가 흐르면 빛나요',
+    help: '극성 부품: 전류는 애노드(A, 긴 다리) → 캐소드(K)로만 흐릅니다. 올바르게 연결하면 빛나고, 반대로 연결하면 어두운 채로 있습니다. 직렬 저항이 없으면 타버려요.' },
+  potentiometer: { name: '파워 노브', icon: 'gauge', swatch: '#8fb3ff', desc: '돌려서 저항을 바꿔요',
+    help: '가변 저항. 노브를 스크롤하거나(또는 인스펙터에서 R을 편집해) 저항을 라이브로 바꿀 수 있습니다 — 낮추면 모터가 빨라지고 / LED가 밝아집니다.' },
+  push_button: { name: '푸시 버튼', icon: 'circle-dot', swatch: '#7bd88f', desc: '누르고 있는 동안 동작해요',
+    help: '누르고 있는 동안만 통전하는 모멘터리 스위치. 필요할 때 어떤 동작을 일으키기에 좋아요.' },
+  lamp: { name: '전구', icon: 'lamp-desk', swatch: '#ffd27a', desc: '따뜻하게 빛나는 전구',
+    help: '필라멘트 전구. 무극성이라 어느 방향이든 전류가 필라멘트를 달궈 흐르는 양에 따라 더 밝게 빛납니다.' },
+  buzzer: { name: '버저', icon: 'volume-2', swatch: '#3a3f4a', desc: '전기로 소리를 내요',
+    help: '전류가 흐르면 음을 냅니다. 공급원 양쪽에 연결해 윙윙거리는 소리를 들어 보세요.' },
+  diode: { name: '다이오드', icon: 'arrow-right', swatch: '#5a606c', desc: '전류를 한쪽으로만 보내요',
+    help: '극성 부품: 전류는 애노드(A) → 캐소드(K, 줄무늬 끝)로만 흐릅니다. 반대 방향의 전류는 막아 줍니다 — 정류기입니다.' },
+  photoresistor: { name: '빛 센서', icon: 'sun', swatch: '#c9b063', desc: '밝기에 반응해요',
+    help: '빛이 닿으면 저항이 떨어집니다. 무극성 — 회로용 빛 센서입니다.' },
+  thermistor: { name: '열 센서', icon: 'thermometer', swatch: '#c86b4a', desc: '온도에 반응해요',
+    help: '온도에 따라 저항이 변합니다. 무극성 — 회로용 열 센서입니다.' },
+  fuse: { name: '퓨즈', icon: 'shield-check', swatch: '#c9c9d0', desc: '회로를 보호해 줘요',
+    help: '정격을 넘기 전까지 전류를 흘리다 끊어지는 가는 연결 — 회로의 나머지를 보호합니다.' },
+  capacitor: { name: '커패시터', icon: 'battery-medium', swatch: '#2a8f8f', desc: '약간의 전하를 저장해요',
+    help: '전하를 저장했다가 방출합니다. 회로를 매끄럽게 하고 완충하며, 충전 후에는 정상 직류를 차단합니다.' },
+  servo: { name: '서보', icon: 'rotate-cw', swatch: '#4d7bd8', desc: '정확한 각도로 회전해요',
+    help: '지시된 각도를 유지하는 기어 모터. 전원, 그라운드, 신호 라인 — 세 줄이 필요합니다.' },
+  relay: { name: '릴레이', icon: 'workflow', swatch: '#3d5a8f', desc: '회로로 제어되는 스위치',
+    help: '전기적으로 작동하는 스위치: 코일에 여자 전류를 주면 별도의 더 큰 출력 접점이 닫힙니다.' },
 };
 
-// tray category per type — powers the filter chips as the catalog grows.
+// 타입별 트레이 카테고리 — 카탈로그가 커질수록 필터 칩을 구동.
 const CATEGORY = {
-  battery: 'Power',
-  motor: 'Output', led: 'Output', lamp: 'Output', buzzer: 'Output', servo: 'Output',
-  resistor: 'Passive', capacitor: 'Passive', diode: 'Passive', fuse: 'Passive',
-  switch: 'Control', push_button: 'Control', potentiometer: 'Control', relay: 'Control',
-  photoresistor: 'Sensor', thermistor: 'Sensor',
+  battery: '전원',
+  motor: '출력', led: '출력', lamp: '출력', buzzer: '출력', servo: '출력',
+  resistor: '수동', capacitor: '수동', diode: '수동', fuse: '수동',
+  switch: '제어', push_button: '제어', potentiometer: '제어', relay: '제어',
+  photoresistor: '센서', thermistor: '센서',
 };
-const CATEGORY_ORDER = ['Power', 'Output', 'Passive', 'Control', 'Sensor'];
+const CATEGORY_ORDER = ['전원', '출력', '수동', '제어', '센서'];
 
 // A motor mesh whose two terminals are named A / B (to match the library),
 // reusing the self-balancer's nicely-detailed motor geometry.
@@ -535,34 +535,34 @@ export function initCreatorAssembly({ canvas, scene, camera, controls, api, hud,
     }
   }
 
-  // ── parts tray ────────────────────────────────────────────────
+  // ── 부품 트레이 ────────────────────────────────────────────────
   const tray = document.getElementById('parts-tray');
 
-  // Search + category filters above the tray so parts stay findable as the
-  // catalog grows. Filter state is live; renderTray() re-filters the cards.
+  // 검색 + 카테고리 필터를 트레이 위에 두어 카탈로그가 커져도 부품을 찾을 수 있게.
+  // 필터 상태는 라이브; renderTray()가 카드를 다시 필터링.
   let searchText = '';
-  let activeCat = 'All';
+  let activeCat = '전체';
 
   const trayControls = document.createElement('div');
   trayControls.className = 'tray-controls';
   const search = document.createElement('input');
   search.type = 'search';
   search.className = 'tray-search';
-  search.placeholder = 'Search parts…';
-  search.setAttribute('aria-label', 'Search parts');
+  search.placeholder = '부품 검색…';
+  search.setAttribute('aria-label', '부품 검색');
   trayControls.appendChild(search);
 
   const chipRow = document.createElement('div');
   chipRow.className = 'tray-filters';
   chipRow.setAttribute('role', 'group');
-  chipRow.setAttribute('aria-label', 'Filter parts by category');
-  for (const cat of ['All', ...CATEGORY_ORDER]) {
+  chipRow.setAttribute('aria-label', '카테고리별 부품 필터');
+  for (const cat of ['전체', ...CATEGORY_ORDER]) {
     const chip = document.createElement('button');
     chip.type = 'button';
-    chip.className = 'tray-chip' + (cat === 'All' ? ' is-active' : '');
+    chip.className = 'tray-chip' + (cat === '전체' ? ' is-active' : '');
     chip.dataset.cat = cat;
     chip.textContent = cat;
-    chip.setAttribute('aria-pressed', cat === 'All' ? 'true' : 'false');
+    chip.setAttribute('aria-pressed', cat === '전체' ? 'true' : 'false');
     chip.addEventListener('click', () => {
       activeCat = cat;
       for (const c of chipRow.children) {
@@ -579,14 +579,14 @@ export function initCreatorAssembly({ canvas, scene, camera, controls, api, hud,
 
   const emptyMsg = document.createElement('div');
   emptyMsg.className = 'tray-empty';
-  emptyMsg.textContent = 'No parts match your search.';
+  emptyMsg.textContent = '검색과 일치하는 부품이 없어요.';
   emptyMsg.hidden = true;
   tray.parentNode.insertBefore(emptyMsg, tray.nextSibling);
 
   search.addEventListener('input', () => { searchText = search.value.trim().toLowerCase(); renderTray(); });
 
   function matches(type, meta, cat) {
-    if (activeCat !== 'All' && cat !== activeCat) return false;
+    if (activeCat !== '전체' && cat !== activeCat) return false;
     if (!searchText) return true;
     const hay = `${meta.name} ${type} ${meta.desc} ${cat}`.toLowerCase();
     return hay.includes(searchText);
@@ -597,7 +597,7 @@ export function initCreatorAssembly({ canvas, scene, camera, controls, api, hud,
     let shown = 0;
     for (const type of Object.keys(LIBRARY)) {
       const meta = CARD[type] || { name: type, swatch: '#888', desc: '', help: '' };
-      const cat = CATEGORY[type] || 'Other';
+      const cat = CATEGORY[type] || '기타';
       if (!matches(type, meta, cat)) continue;
       shown++;
       const card = document.createElement('div');
@@ -608,7 +608,7 @@ export function initCreatorAssembly({ canvas, scene, camera, controls, api, hud,
       card.innerHTML = `
         <div class="part-visual"><i data-lucide="${meta.icon || 'box'}"></i></div>
         <div class="part-copy"><div class="part-name">${meta.name}</div><div class="part-desc">${meta.desc}</div></div>
-        <span class="help-icon" title="" aria-label="About ${meta.name}">?</span>`;
+        <span class="help-icon" title="" aria-label="${meta.name} 정보">?</span>`;
       tray.appendChild(card);
       const help = card.querySelector('.help-icon');
       help.addEventListener('mouseenter', (e) => hud.showTooltip(e, meta.help));
@@ -621,7 +621,7 @@ export function initCreatorAssembly({ canvas, scene, camera, controls, api, hud,
       });
     }
     emptyMsg.hidden = shown > 0;
-    try { window.lucide?.createIcons(); } catch { /* icon rendering is best-effort */ }
+    try { window.lucide?.createIcons(); } catch { /* 아이콘 렌더링은 부가 기능 */ }
   }
   renderTray();
 
@@ -669,8 +669,8 @@ export function initCreatorAssembly({ canvas, scene, camera, controls, api, hud,
     }
     sync();
     hud.setStatus(api.get_document().components.length >= 2
-      ? `${TAP} a pin, then its target pin, to wire them`
-      : 'Keep placing parts…');
+      ? `${TAP} 핀을 클릭(탭)한 다음, 연결할 대상 핀을 클릭(탭)해 배선하세요`
+      : '부품을 계속 놓아 보세요…');
     hud.refreshChecklist();
   }
   // did the finger lift while still over the phone's parts sheet?
@@ -834,8 +834,8 @@ export function initCreatorAssembly({ canvas, scene, camera, controls, api, hud,
   const COARSE = (() => { try { return window.matchMedia('(pointer: coarse)').matches; } catch { return false; } })();
   const SNAP_PX = COARSE ? 40 : 26;
   // touch has no click, and no left-hand tray — say what the user actually does
-  const TAP = COARSE ? 'Tap' : 'Click';
-  const TRAY = COARSE ? 'Parts' : 'the tray';
+  const TAP = COARSE ? '탭' : '클릭';
+  const TRAY = COARSE ? '부품' : '트레이';
   // Which device produced the gesture currently in flight. A `click` carries no
   // pointerType, so the preceding pointerdown records it — that, not a media
   // query, is what decides whether a tap gets the touch gestures: a hybrid
@@ -981,7 +981,7 @@ export function initCreatorAssembly({ canvas, scene, camera, controls, api, hud,
     if (wire) {
       const [a, b] = wire.userData.ids;
       api.disconnect({ from: a, to: b });
-      hud.flash('Wire removed', 'ok'); audio.ui();
+      hud.flash('전선을 제거했어요', 'ok'); audio.ui();
       sync(); hud.refreshChecklist();
       return true;
     }
@@ -1129,7 +1129,7 @@ export function initCreatorAssembly({ canvas, scene, camera, controls, api, hud,
     const id = pin.userData.endpointId;
     if (!pending) {
       pending = id; highlightPin(id, true); audio.ui();
-      hud.setStatus(`Selected ${id} — now ${COARSE ? 'tap' : 'click'} its target`);
+      hud.setStatus(`${id} 선택됨 — 이제 ${COARSE ? '탭' : '클릭'}해 대상을 고르세요`);
       trackOnce('wire_attempt');
       return;
     }
@@ -1140,12 +1140,12 @@ export function initCreatorAssembly({ canvas, scene, camera, controls, api, hud,
       hud.flash(`✓ ${from} → ${id}`, 'ok'); audio.connect();
       track(EVENTS.CONNECT_OK, { nets: api.get_document().nets.length });
     } else if (!res.ok) {
-      hud.flash(res.errors[0] || 'invalid connection', 'bad'); audio.error();
-      // the rejection reason is where users get stuck — worth the cardinality
-      track(EVENTS.CONNECT_FAIL, { reason: res.errors[0] || 'unknown' });
-    }
-    sync(); hud.refreshChecklist();
-  });
+        hud.flash(res.errors[0] || '잘못된 연결입니다', 'bad'); audio.error();
+        // 거부 사유는 사용자가 막히는 지점 — 카디널리티만큼 가치가 있음
+        track(EVENTS.CONNECT_FAIL, { reason: res.errors[0] || 'unknown' });
+      }
+      sync(); hud.refreshChecklist();
+    });
 
   // ── clear board ───────────────────────────────────────────────
   const clearBtn = document.getElementById('clear-btn');
@@ -1154,7 +1154,7 @@ export function initCreatorAssembly({ canvas, scene, camera, controls, api, hud,
     for (const c of api.get_document().components) api.remove_component({ id: c.id });
     pending = null;
     sync();
-    hud.setStatus(`Drag a battery and a motor from ${TRAY} onto the bench`);
+    hud.setStatus(`${TRAY}에서 건전지와 모터를 작업대로 끌어오세요`);
     hud.refreshChecklist();
   }
   clearBtn?.addEventListener('click', clearBoard);

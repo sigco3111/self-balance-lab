@@ -1,32 +1,31 @@
-// Hephaestus — the client agent loop (Milestone 2), on the Gemini API.
+// 헤파이스토스 — 클라이언트 에이전트 루프 (Milestone 2), Gemini API 기반.
 //
-// Owns the conversation (Gemini `contents`) and the tool-execution loop; the
-// model's decisions land on the build ONLY through window.__api (via runTool).
-// Flow per user message:
-//   1. POST { contents, document } → /api/hephaestus  (one model turn)
-//   2. if the reply has functionCall parts: run each against the api, append the
-//      results as a user turn of functionResponse parts, and go back to 1
-//   3. otherwise show the model's text and stop
+// 대화(Gemini `contents`)와 도구 실행 루프를 소유; 모델의 결정은 오직 window.__api를 통해
+// (runTool을 통해) 빌드에 도달합니다. 사용자 메시지당 흐름:
+//   1. POST { contents, document } → /api/hephaestus  (모델 턴 한 번)
+//   2. 응답에 functionCall 파트가 있으면: 각각을 api에 대해 실행하고 결과를 user 턴의
+//      functionResponse 파트로 첨부한 뒤 1로 돌아감
+//   3. 그렇지 않으면 모델 텍스트를 보여 주고 중단
 //
-// A free-tier QUOTA gate caps how many messages a signed-out / free user can
-// send per day, so the shared Gemini free key can't be burned through. Pro users
-// (profiles.tier) are uncapped. The gate is client-side (localStorage) — good
-// enough to protect the free key; server-side enforcement lands with real auth.
+// 무료 티어 QUOTA 게이트는 서명하지 않은 / 무료 사용자가 하루에 보낼 수 있는 메시지 수를 제한해,
+// 공유되는 Gemini 무료 키가 소진되지 않도록 합니다. 프로 사용자(profiles.tier)는 제한 없음.
+// 게이트는 클라이언트 측(localStorage)이며 — 무료 키를 보호하기에 충분; 서버 측 강제는 실제 인증
+// 도입 시 함께 옵니다.
 import { runTool } from '../api/tools.js';
 import { track, EVENTS } from './analytics.js';
 
 const ENDPOINT = '/api/hephaestus';
-const MAX_STEPS = 8;          // model turns per user message (tool loops)
-const FREE_DAILY = 25;        // free/anon messages per day per browser
+const MAX_STEPS = 8;          // 사용자 메시지당 모델 턴 수 (도구 루프)
+const FREE_DAILY = 25;        // 브라우저당 하루 무료/익명 메시지
 const USAGE_KEY = 'sbl-hephaestus-usage';
 
-// A few one-tap starter prompts that show, by example, that Hephaestus can build the
-// whole thing for you — the fastest path past a blank bench.
+// 한 번 누르면 시작 — 헤파이스토스가 전체를 만들 수 있음을 예시로 보여 주는
+// 몇 가지 시작 프롬프트입니다 — 빈 작업대를 가장 빠르게 지나가는 길.
 const EXAMPLE_PROMPTS = [
-  'Build a blinking LED',
-  'Wire a motor to a battery',
-  'Add a switch to turn the motor on and off',
-  'Wire it up and run it',
+  '깜빡이는 LED 만들어 줘',
+  '건전지를 모터에 연결해 줘',
+  '모터를 켜고 끄는 스위치를 추가해 줘',
+  '다 연결하고 실행해 줘',
 ];
 
 export function initHephaestus({ api, onFlash, getTier, onUpgrade } = {}) {
@@ -35,7 +34,7 @@ export function initHephaestus({ api, onFlash, getTier, onUpgrade } = {}) {
   const log = document.getElementById('hephaestus-log');
   if (!form || !input || !log) return { send: async () => {} };
 
-  const contents = [];   // Gemini message history (user/model turns)
+  const contents = [];   // Gemini 메시지 이력 (사용자/모델 턴)
   let busy = false;
 
   function bubble(who, text) {
@@ -55,20 +54,20 @@ export function initHephaestus({ api, onFlash, getTier, onUpgrade } = {}) {
     log.scrollTop = log.scrollHeight;
   }
 
-  // Animated "thinking…" placeholder shown while a model turn is in flight.
-  // Returned handle is removed as soon as the turn resolves.
+  // 모델 턴이 진행 중일 때 보이는 애니메이션 "생각 중…" 자리표시.
+  // 반환된 핸들은 턴이 해결되자마자 제거됨.
   function showThinking() {
     const el = document.createElement('div');
     el.className = 'hp-thinking';
-    el.setAttribute('aria-label', 'Hephaestus is thinking');
+    el.setAttribute('aria-label', '헤파이스토스가 생각 중');
     el.innerHTML = '<span class="hp-dot"></span><span class="hp-dot"></span><span class="hp-dot"></span>';
     log.appendChild(el);
     log.scrollTop = log.scrollHeight;
     return { remove() { el.remove(); } };
   }
 
-  // Example-prompt chips: one tap fills the input and sends. Rendered once,
-  // hidden after the first user message so they don't clutter the transcript.
+  // 예시 프롬프트 칩: 한 번 누르면 입력을 채우고 보냄. 한 번 렌더되고, 첫 사용자 메시지
+  // 이후에는 숨겨져 대화를 어수선하게 만들지 않습니다.
   function renderChips() {
     const wrap = document.createElement('div');
     wrap.className = 'hp-chips';
@@ -85,7 +84,7 @@ export function initHephaestus({ api, onFlash, getTier, onUpgrade } = {}) {
   }
   const chips = renderChips();
 
-  // ── free-tier quota ───────────────────────────────────────────
+  // ── 무료 티어 쿼터 ──────────────────────────────────────────────
   function today() { return new Date().toISOString().slice(0, 10); }
   function usage() {
     try {
@@ -100,7 +99,7 @@ export function initHephaestus({ api, onFlash, getTier, onUpgrade } = {}) {
   }
   function overQuota() {
     const tier = (getTier && getTier()) || 'free';
-    if (tier !== 'free') return false;      // pro/paid: uncapped
+    if (tier !== 'free') return false;      // 프로/유료: 제한 없음
     return usage().count >= FREE_DAILY;
   }
 
@@ -112,16 +111,16 @@ export function initHephaestus({ api, onFlash, getTier, onUpgrade } = {}) {
     });
     if (!res.ok) {
       const e = await res.json().catch(() => ({}));
-      // 503 = the Edge proxy has no GEMINI_API_KEY configured (e.g. local dev
-      // or a fork). Hephaestus is optional — the whole app works without it — so say
-      // so plainly rather than looking broken.
+      // 503 = Edge 프록시에 GEMINI_API_KEY가 설정되지 않음 (예: 로컬 개발 또는 fork).
+      // 헤파이스토스는 선택 — 앱 전체가 그것 없이도 동작 — 그래서 망가진 듯 보이지 말고
+      // 평이하게 말하세요.
       if (res.status === 503) {
-        const err = new Error('Hephaestus is offline here — no API key is set. You can still build by hand: drag parts in and click pin-to-pin to wire.');
+        const err = new Error('이곳에선 헤파이스토스가 오프라인이에요 — API 키가 설정되지 않았습니다. 그래도 직접 만들 수 있습니다: 부품을 끌어다 놓고 핀끼리 클릭해 배선하세요.');
         err.soft = true;
         throw err;
       }
-      if (res.status === 429) throw new Error('Hephaestus is busy right now — give it a few seconds and try again.');
-      throw new Error(e.error || `Hephaestus request failed (${res.status})`);
+      if (res.status === 429) throw new Error('지금은 헤파이스토스가 바빠요 — 몇 초만 기다렸다가 다시 시도해 주세요.');
+      throw new Error(e.error || `헤파이스토스 요청 실패 (${res.status})`);
     }
     return res.json();   // { content:{role,parts}, finishReason }
   }
@@ -129,18 +128,18 @@ export function initHephaestus({ api, onFlash, getTier, onUpgrade } = {}) {
   async function send(text) {
     if (busy || !text.trim()) return;
     if (overQuota()) {
-      bubble('err', `Daily free limit reached — you've used your ${FREE_DAILY} free Hephaestus messages for today. Sign in or upgrade for more, or keep building by hand, it's all yours.`);
+      bubble('err', `오늘의 무료 한도를 모두 사용했어요 — 오늘 ${FREE_DAILY}개의 헤파이스토스 메시지를 모두 썼습니다. 로그인하거나 업그레이드해 더 받거나, 직접 만들 수도 있어요. 어차피 다 당신 거예요.`);
       onUpgrade?.();
       return;
     }
     busy = true;
     input.disabled = true;
-    chips?.remove();   // starter chips have served their purpose
+    chips?.remove();   // 시작 칩은 역할을 다했음
     bubble('user', text);
     contents.push({ role: 'user', parts: [{ text }] });
-    bumpUsage();   // one user message = one unit, regardless of tool round-trips
-    // funnel: how many users actually reach for the assistant, and does using it
-    // change their odds of a working circuit? (the split that justifies the bet)
+    bumpUsage();   // 사용자 메시지 1개 = 단위 1개, 도구 왕복 횟수와 무관
+    // 퍼널: 얼마나 많은 사용자가 실제로 어시스턴트를 찾는가, 그리고 그것을 쓰는 것이
+    // 동작하는 회로를 만들 확률을 바꾸는가? (그 베팅을 정당화하는 분할)
     track(EVENTS.HEPHAESTUS_MSG, { turn: contents.length });
 
     try {
@@ -156,14 +155,14 @@ export function initHephaestus({ api, onFlash, getTier, onUpgrade } = {}) {
         }
 
         const calls = parts.filter(p => p.functionCall);
-        if (calls.length === 0) break;   // model is done
+        if (calls.length === 0) break;   // 모델이 완료됨
 
         const responseParts = [];
         for (const p of calls) {
           const { name, args } = p.functionCall;
           toolNote(name, args);
-          // some tools (run_sim) are async — await unconditionally so a promise
-          // is never stringified into the model's function response as `{}`.
+          // 일부 도구(run_sim)는 비동기 — 약속이 모델의 함수 응답에 `{}` 로 문자열화되어
+          // 들어가지 않도록 무조건 await.
           const result = await runTool(api, name, args || {});
           track(EVENTS.HEPHAESTUS_TOOL, { tool: name, ok: !!result?.ok });
           responseParts.push({ functionResponse: { name, response: wrap(result) } });
@@ -171,10 +170,10 @@ export function initHephaestus({ api, onFlash, getTier, onUpgrade } = {}) {
         contents.push({ role: 'user', parts: responseParts });
       }
     } catch (e) {
-      const msg = e.message || 'Hephaestus failed';
+      const msg = e.message || '헤파이스토스 실패';
       bubble('err', msg);
-      // Soft failures (Hephaestus just isn't available) shouldn't fire an alarming
-      // red status flash — the app is fine, only the assistant is off.
+      // 부드러운 실패(헤파이스토스가 단지 사용 불가)는 놀라운 빨간 상태 플래시를
+      // 띄우지 않아야 합니다 — 앱은 멀쩡하고 어시스턴트만 꺼져 있어요.
       if (!e.soft) onFlash?.(msg, 'bad');
     } finally {
       busy = false;
@@ -193,8 +192,8 @@ export function initHephaestus({ api, onFlash, getTier, onUpgrade } = {}) {
   return { send };
 }
 
-// Gemini requires functionResponse.response to be a JSON object (not an array or
-// scalar) — wrap anything else so the loop never sends a malformed part.
+// Gemini는 functionResponse.response가 JSON 객체(배열/스칼라 아님)일 것을 요구합니다 — 그 외는
+// 모두 감싸 루프가 형식에 맞지 않는 파트를 보내지 않도록 합니다.
 function wrap(result) {
   return (result && typeof result === 'object' && !Array.isArray(result)) ? result : { result };
 }

@@ -1,28 +1,26 @@
 // Phone shell — the ≤820px layout.
 //
-// On a desktop the app is a three-column cockpit: tray | bench | run panel. On a
-// phone that same grid stacked into three short rows and the bench — the whole
-// product — ended up a ~130px letterbox between two panels, with the controls
-// legend, the coach card, the Hephaestus pill and the round canvas buttons all
-// piled on top of it. Nothing about that is fixable with a couple of width
-// tweaks, so phones get a different shell:
+// 데스크톱에서 앱은 3열 콕핏: 트레이 | 작업대 | 실행 패널. 폰에서 같은 그리드를 3개의
+// 짧은 행으로 쌓으면 작업대 — 즉 모든 것 — 가 양 패널 사이에 ~130px의 레터박스가 되고,
+// 조작 안내, 코치 카드, 헤파이스토스 알약, 캔버스 버튼이 그 위에 쌓입니다. 이것은
+// 폭 조정 두세 개로 고칠 수 있는 게 아니라서, 폰은 다른 셸을 가집니다:
 //
-//   • the bench is full-bleed — it owns the screen, always
-//   • the tray / connections+inspector become a bottom SHEET, one tab at a time
-//   • RUN moves into a fixed bottom bar, next to the sheet tabs
-//   • the canvas' round buttons (help / sound / rain / share) move into the top bar
+//   • 작업대는 풀 블리드 — 항상 화면 전체를 차지
+//   • 트레이와 연결+인스펙터는 한 번에 하나씩 탭으로 보이는 하단 시트
+//   • 실행은 시트 탭 옆의 고정 하단 바로 이동
+//   • 캔버스의 동그란 버튼들(도움말/사운드/빗소리/공유)은 상단 바로 이동
 //
-// It is a *layout* module: it moves existing nodes and toggles classes, and
-// never duplicates a control (a moved node keeps its listeners, so RUN is still
-// the same #upload-btn main.js wired). Everything reverts on the way back to a
-// wide viewport, so a rotated tablet or a resized desktop window is fine.
+// *레이아웃* 모듈입니다: 기존 노드를 옮기고 클래스를 토글하며, 컨트롤을 절대
+// 복제하지 않습니다(옮겨진 노드는 리스너를 그대로 유지하므로, 실행은 main.js가 연결한
+// 같은 #upload-btn입니다). 넓은 뷰포트로 돌아가면 모든 게 원위치되어, 회전한
+// 태블릿이나 데스크톱 창 크기 변경도 정상입니다.
 import { subscribe } from './state.js';
 
 const PHONE_MQ = '(max-width: 820px)';
 const TABS = [
-  { id: 'parts', label: 'Parts', icon: 'boxes' },
-  { id: 'circuit', label: 'Science', icon: 'activity' },
-  { id: 'hephaestus', label: 'Build buddy', icon: 'sparkles' },
+  { id: 'parts', label: '부품', icon: 'boxes' },
+  { id: 'circuit', label: '회로', icon: 'activity' },
+  { id: 'hephaestus', label: '빌딩 도우미', icon: 'sparkles' },
 ];
 
 export function initMobileUI({ onLayoutChange } = {}) {
@@ -121,7 +119,7 @@ export function initMobileUI({ onLayoutChange } = {}) {
     const handle = document.createElement('button');
     handle.type = 'button';
     handle.className = 'm-handle';
-    handle.setAttribute('aria-label', 'Close panel');
+    handle.setAttribute('aria-label', '패널 닫기');
     el.prepend(handle);
     let startY = null;
     handle.addEventListener('pointerdown', (e) => { startY = e.clientY; handle.setPointerCapture?.(e.pointerId); });
@@ -188,8 +186,12 @@ export function initMobileUI({ onLayoutChange } = {}) {
     body.classList.add('is-phone');
     // the markup's opening line names a tray that is a sheet here
     const status = document.getElementById('hud-status');
+    if (status && /부품|트레이|옆|왼쪽/.test(status.textContent)) {
+      // (English copies would say "from the tray"; here, we just leave any
+      // existing Korean hint untouched once it's been translated.)
+    }
     if (status && /from the tray/i.test(status.textContent)) {
-      status.textContent = 'Open Parts below and drag a part onto the bench';
+      status.textContent = '아래 부품 패널에서 부품을 끌어다 놓으세요';
     }
     closeSheet();
     try { window.lucide?.createIcons(); } catch { /* icons are best-effort */ }

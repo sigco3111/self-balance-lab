@@ -1,16 +1,14 @@
-// Example circuits — a browsable gallery of ready-made builds, from a first LED
-// to sensor circuits with real physical inputs (a candle warming a thermistor, a
-// lamp lighting a photoresistor). Selecting one clears the bench and rebuilds it
-// purely through window.__api (place_component + connect), so an example is just
-// a scripted user — no special-case loading path.
+// 예제 회로 — 첫 LED부터 실제 물리 입력을 가진 센서 회로까지, 즉시 만들어 볼 수 있는
+// 작품의 갤러리. 하나를 고르면 작업대를 비우고 동일한 window.__api(place_component + connect)를
+// 통해 다시 쌓습니다. 즉, 예제는 특별한 로딩 경로가 없는 스크립팅된 사용자에 불과합니다.
 import { state } from './state.js';
 
-// Each preset lists parts (type + stable id + optional param overrides) and wires
-// (endpoint pairs "id.pin"). Positions are auto-assigned on a grid at load time.
+// 각 프리셋은 부품(type + 안정 id + 옵션 파라미터)과 배선(endpoint 쌍 "id.pin")을 나열.
+// 위치는 로드 시 그리드에 자동 배치.
 export const EXAMPLES = [
   {
-    id: 'led-torch', tier: 'Starter', title: 'LED torch',
-    blurb: 'Battery → resistor → LED. The resistor keeps the LED from burning out.',
+    id: 'led-torch', tier: '초급', title: 'LED 손전등',
+    blurb: '건전지 → 저항 → LED. 저항이 LED가 타지 않게 지켜 줍니다.',
     parts: [
       { type: 'battery', id: 'bat1' },
       { type: 'resistor', id: 'res1', params: { resistance: 220 } },
@@ -19,8 +17,8 @@ export const EXAMPLES = [
     wires: [['bat1.+', 'res1.A'], ['res1.B', 'led1.A'], ['led1.K', 'bat1.-']],
   },
   {
-    id: 'switch-lamp', tier: 'Starter', title: 'Light switch',
-    blurb: 'A switch in series with a lamp. Click the switch on the bench to toggle it.',
+    id: 'switch-lamp', tier: '초급', title: '전구 스위치',
+    blurb: '전구와 직렬로 연결된 스위치. 작업대 위 스위치를 클릭해 토글해 보세요.',
     parts: [
       { type: 'battery', id: 'bat1' },
       { type: 'switch', id: 'sw1', params: { closed: true } },
@@ -29,8 +27,8 @@ export const EXAMPLES = [
     wires: [['bat1.+', 'sw1.A'], ['sw1.B', 'lamp1.A'], ['lamp1.B', 'bat1.-']],
   },
   {
-    id: 'button-buzzer', tier: 'Starter', title: 'Push-button buzzer',
-    blurb: 'Hold the push button to complete the loop and sound the buzzer.',
+    id: 'button-buzzer', tier: '초급', title: '버튼식 버저',
+    blurb: '푸시 버튼을 누르고 있는 동안에만 회로가 닫혀 버저가 울립니다.',
     parts: [
       { type: 'battery', id: 'bat1' },
       { type: 'push_button', id: 'btn1', params: { closed: true } },
@@ -39,8 +37,8 @@ export const EXAMPLES = [
     wires: [['bat1.+', 'btn1.A'], ['btn1.B', 'buz1.+'], ['buz1.-', 'bat1.-']],
   },
   {
-    id: 'pot-dimmer', tier: 'Intermediate', title: 'Motor speed dimmer',
-    blurb: 'A potentiometer in series with a motor — scroll its knob to vary the speed.',
+    id: 'pot-dimmer', tier: '중급', title: '모터 속도 조절기',
+    blurb: '모터와 직렬로 연결된 가변저항 — 노브를 스크롤해 속도를 바꿔 보세요.',
     parts: [
       { type: 'battery', id: 'bat1' },
       { type: 'potentiometer', id: 'pot1', params: { resistance: 40 } },
@@ -49,8 +47,8 @@ export const EXAMPLES = [
     wires: [['bat1.+', 'pot1.A'], ['pot1.B', 'mot1.A'], ['mot1.B', 'bat1.-']],
   },
   {
-    id: 'parallel-leds', tier: 'Intermediate', title: 'Two LEDs in parallel',
-    blurb: 'One resistor feeds two LEDs sharing a node — see how parallel branches split current.',
+    id: 'parallel-leds', tier: '중급', title: '병렬로 연결된 두 개의 LED',
+    blurb: '하나의 저항이 공통 노드를 공유하는 두 LED에 전류를 공급합니다 — 병렬 분기가 어떻게 전류를 나누는지 보세요.',
     parts: [
       { type: 'battery', id: 'bat1' },
       { type: 'resistor', id: 'res1', params: { resistance: 150 } },
@@ -64,8 +62,8 @@ export const EXAMPLES = [
     ],
   },
   {
-    id: 'diode-oneway', tier: 'Intermediate', title: 'Diode: the one-way valve',
-    blurb: 'A diode passes current only A→K. Wired forward the lamp lights; flip the diode (R) and it goes dark.',
+    id: 'diode-oneway', tier: '중급', title: '다이오드: 일방향 밸브',
+    blurb: '다이오드는 A→K 방향으로만 전류를 흘립니다. 순방향으로 연결하면 전구가 켜지고, 다이오드를 회전(R)시키면 꺼집니다.',
     parts: [
       { type: 'battery', id: 'bat1' },
       { type: 'diode', id: 'dio1' },
@@ -74,8 +72,8 @@ export const EXAMPLES = [
     wires: [['bat1.+', 'dio1.A'], ['dio1.K', 'lamp1.A'], ['lamp1.B', 'bat1.-']],
   },
   {
-    id: 'fuse-blow', tier: 'Intermediate', title: 'Fuse & overload',
-    blurb: 'A low-resistance lamp draws more than the 1 A fuse allows — the Inspector flags the over-current.',
+    id: 'fuse-blow', tier: '중급', title: '퓨즈와 과부하',
+    blurb: '저저항 전구가 1A 퓨즈 정격보다 더 많은 전류를 끌어다 씁니다 — 인스펙터가 과전류를 알려 줍니다.',
     parts: [
       { type: 'battery', id: 'bat1' },
       { type: 'fuse', id: 'fus1', params: { maxCurrent: 1 } },
@@ -84,8 +82,8 @@ export const EXAMPLES = [
     wires: [['bat1.+', 'fus1.A'], ['fus1.B', 'lamp1.A'], ['lamp1.B', 'bat1.-']],
   },
   {
-    id: 'relay-motor', tier: 'Advanced', title: 'Relay-switched motor',
-    blurb: 'A relay contact (COM→NO) switches the motor. Toggle the relay to energize it.',
+    id: 'relay-motor', tier: '고급', title: '릴레이로 제어되는 모터',
+    blurb: '릴레이 접점(COM→NO)이 모터를 스위치합니다. 릴레이를 토글해 여자시켜 보세요.',
     parts: [
       { type: 'battery', id: 'bat1' },
       { type: 'relay', id: 'rel1', params: { closed: true } },
@@ -94,9 +92,9 @@ export const EXAMPLES = [
     wires: [['bat1.+', 'rel1.COM'], ['rel1.NO', 'mot1.A'], ['mot1.B', 'bat1.-']],
   },
   {
-    id: 'thermal-candle', tier: 'Physical inputs', title: '🔥 Heat-sensing lamp',
-    blurb: 'A thermistor + lamp. Cold, its high resistance keeps the lamp dark — drag the candle up to it and the lamp lights.',
-    note: 'Drag the candle (it appears on the bench) close to the thermistor to heat it.',
+    id: 'thermal-candle', tier: '물리 입력', title: '🔥 열 감지 전구',
+    blurb: '서미스터와 전구. 차가울 때 저항이 높아 전구가 어둡습니다 — 양초를 가까이 가져가면 전구가 켜집니다.',
+    note: '작업대 위에 나타난 양초를 서미스터 가까이로 끌고 가서 가열하세요.',
     parts: [
       { type: 'battery', id: 'bat1' },
       { type: 'thermistor', id: 'thr1', params: { resistance: 3000, maxResistance: 3000 } },
@@ -105,9 +103,9 @@ export const EXAMPLES = [
     wires: [['bat1.+', 'thr1.A'], ['thr1.B', 'lamp1.A'], ['lamp1.B', 'bat1.-']],
   },
   {
-    id: 'light-ldr', tier: 'Physical inputs', title: '💡 Light-sensing LED',
-    blurb: 'A photoresistor + LED. In the dark its resistance is high and the LED is off — shine the lamp on it to switch the LED on.',
-    note: 'Drag the lamp (it appears on the bench) over the photoresistor to light it.',
+    id: 'light-ldr', tier: '물리 입력', title: '💡 빛 감지 LED',
+    blurb: '광저항과 LED. 어둠에서는 저항이 높아 LED가 꺼져 있습니다 — 전구를 비추면 LED가 켜집니다.',
+    note: '작업대 위에 나타난 전구를 광저항 위로 끌고 가 빛을 비춰 보세요.',
     parts: [
       { type: 'battery', id: 'bat1' },
       { type: 'photoresistor', id: 'ldr1', params: { resistance: 3000, maxResistance: 3000 } },
@@ -122,25 +120,25 @@ export function initExamples({ api, hud, onLoad, exitSim } = {}) {
   const workspace = document.getElementById('workspace');
   if (!workspace) return { load() {} };
 
-  // launcher button
+  // 시작 버튼
   const btn = document.createElement('button');
   btn.id = 'examples-btn';
   btn.type = 'button';
-  btn.title = 'Try an invention idea';
-  btn.innerHTML = `<i data-lucide="lightbulb"></i><span>Idea shelf</span>`;
+  btn.title = '아이디어 더미에서 시도해 보기';
+  btn.innerHTML = `<i data-lucide="lightbulb"></i><span>아이디어 더미</span>`;
   workspace.appendChild(btn);
 
-  // popover panel
+  // 팝오버 패널
   const panel = document.createElement('div');
   panel.id = 'examples-panel';
   panel.className = 'hidden';
   panel.setAttribute('role', 'dialog');
-  panel.setAttribute('aria-label', 'Invention ideas');
+  panel.setAttribute('aria-label', '아이디어 더미');
 
   const tiers = [...new Set(EXAMPLES.map(e => e.tier))];
   panel.innerHTML =
-    `<div class="ex-head"><span><small>NEED A SPARK?</small><b>Try an invention</b></span>` +
-    `<button class="ex-close" aria-label="Close">✕</button></div>` +
+    `<div class="ex-head"><span><small>영감이 필요한가요?</small><b>하나의 발명품을 시도해 보세요</b></span>` +
+    `<button class="ex-close" aria-label="닫기">✕</button></div>` +
     `<div class="ex-body">` +
     tiers.map(tier =>
       `<div class="ex-group"><div class="ex-tier">${tier}</div>` +
@@ -151,7 +149,7 @@ export function initExamples({ api, hud, onLoad, exitSim } = {}) {
       `</div>`).join('') +
     `</div>`;
   workspace.appendChild(panel);
-  try { window.lucide?.createIcons(); } catch { /* icons are best-effort */ }
+  try { window.lucide?.createIcons(); } catch { /* 아이콘은 부가 기능 */ }
 
   function open() { panel.classList.remove('hidden'); }
   function close() { panel.classList.add('hidden'); }
@@ -161,9 +159,9 @@ export function initExamples({ api, hud, onLoad, exitSim } = {}) {
 
   function load(preset, { silent = false } = {}) {
     if (state.mode === 'sim') exitSim?.();
-    // clear whatever's on the bench
+    // 작업대에 무엇이든 비우기
     for (const c of api.get_document().components) api.remove_component({ id: c.id });
-    // place on a loose grid so parts don't stack (bench physics settles them)
+    // 부품이 서로 쌓이지 않도록 느슨한 그리드에 배치 (작업대 물리가 자리를 잡음)
     const cols = 4;
     preset.parts.forEach((p, i) => {
       const gx = ((i % cols) - (cols - 1) / 2) * 10;
@@ -172,10 +170,10 @@ export function initExamples({ api, hud, onLoad, exitSim } = {}) {
         type: p.type, id: p.id, params: p.params,
         transform: { pos: [gx, 2, gz], rot: [0, 0, 0] },
       });
-      if (!r.ok) hud?.flash?.(`Couldn't place ${p.type}: ${r.errors?.[0] || ''}`, 'bad');
+      if (!r.ok) hud?.flash?.(`${p.type}을(를) 놓지 못했어요: ${r.errors?.[0] || ''}`, 'bad');
     });
     for (const [from, to] of preset.wires) api.connect({ from, to });
-    if (!silent) hud?.flash?.(`Loaded: ${preset.title}`, 'ok');
+    if (!silent) hud?.flash?.(`${preset.title} 불러옴`, 'ok');
     if (preset.note) hud?.setStatus?.(preset.note);
     onLoad?.(preset);
     close();

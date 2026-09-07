@@ -12,24 +12,24 @@ export function initAccount({ onSignIn, onSignOut, onClassroom } = {}) {
   chip.id = 'account-chip';
   chip.type = 'button';
   chip.className = 'tb-account';
-  chip.textContent = 'Sign in';
-  chip.setAttribute('aria-label', 'Account');
+  chip.textContent = '로그인';
+  chip.setAttribute('aria-label', '계정');
   topbar.appendChild(chip);
 
-  // ── magic-link modal ──
+  // ── 매직 링크 모달 ──
   const modal = document.createElement('div');
   modal.id = 'auth-modal';
   modal.className = 'hidden';
   modal.innerHTML = `
     <div class="auth-card" role="dialog" aria-modal="true" aria-labelledby="auth-h">
-      <button class="auth-close" type="button" aria-label="Close">✕</button>
+      <button class="auth-close" type="button" aria-label="닫기">✕</button>
       <div class="auth-mark" aria-hidden="true">◐</div>
-      <h2 id="auth-h">Sync your bench</h2>
-      <p>Your builds and lesson progress follow you to any device. We’ll email a magic link — no password.</p>
+      <h2 id="auth-h">작업대를 동기화하세요</h2>
+      <p>당신의 작품과 학습 진도는 어떤 기기에서도 함께 따라갑니다. 매직 링크를 이메일로 보내 드릴게요 — 비밀번호 없이.</p>
       <form id="auth-form" novalidate>
-        <label class="auth-label" for="auth-email">Email</label>
+        <label class="auth-label" for="auth-email">이메일</label>
         <input id="auth-email" type="email" inputmode="email" autocomplete="email" required placeholder="you@example.com">
-        <button type="submit" class="auth-submit">Send magic link</button>
+        <button type="submit" class="auth-submit">매직 링크 보내기</button>
       </form>
       <div id="auth-msg" class="auth-msg" role="status" aria-live="polite"></div>
     </div>`;
@@ -58,12 +58,12 @@ export function initAccount({ onSignIn, onSignOut, onClassroom } = {}) {
   modal.querySelector('#auth-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const email = emailInput.value.trim();
-    if (!email) { msgEl.textContent = 'Enter your email.'; msgEl.classList.add('err'); return; }
+    if (!email) { msgEl.textContent = '이메일을 입력해 주세요.'; msgEl.classList.add('err'); return; }
     msgEl.classList.remove('err');
-    msgEl.textContent = 'Sending…';
+    msgEl.textContent = '보내는 중…';
     const { error } = await signInWithEmail(email);
-    if (error) { msgEl.textContent = `Couldn’t send the link: ${error}`; msgEl.classList.add('err'); }
-    else { msgEl.textContent = 'Check your inbox for the magic link ✉'; }
+    if (error) { msgEl.textContent = `링크를 보낼 수 없어요: ${error}`; msgEl.classList.add('err'); }
+    else { msgEl.textContent = '받은편지함에서 매직 링크를 확인해 주세요 ✉'; }
   });
 
   // ── signed-in popover ──
@@ -76,10 +76,10 @@ export function initAccount({ onSignIn, onSignOut, onClassroom } = {}) {
     popover = document.createElement('div');
     popover.className = 'acc-popover';
     popover.innerHTML = `
-      <div class="acc-email">${currentUser.email || 'Signed in'}</div>
-      <div class="acc-plan">You’re on <b>${tier === 'pro' ? 'Pro' : 'Free'}</b></div>
-      <button class="acc-classroom" type="button">Classroom</button>
-      <button class="acc-signout" type="button">Sign out</button>`;
+      <div class="acc-email">${currentUser.email || '로그인됨'}</div>
+      <div class="acc-plan">현재 플랜 <b>${tier === 'pro' ? '프로' : '무료'}</b></div>
+      <button class="acc-classroom" type="button">교실</button>
+      <button class="acc-signout" type="button">로그아웃</button>`;
     topbar.appendChild(popover);
     popover.querySelector('.acc-classroom').addEventListener('click', () => { closePopover(); onClassroom?.(); });
     popover.querySelector('.acc-signout').addEventListener('click', async () => {
@@ -101,10 +101,10 @@ export function initAccount({ onSignIn, onSignOut, onClassroom } = {}) {
     closePopover();
     if (user) {
       chip.classList.add('signed-in');
-      chip.innerHTML = `<span class="acc-dot ${tier === 'pro' ? 'pro' : ''}" title="${tier === 'pro' ? 'Pro' : 'Free'}"></span><span class="acc-name">${user.email}</span>`;
+      chip.innerHTML = `<span class="acc-dot ${tier === 'pro' ? 'pro' : ''}" title="${tier === 'pro' ? '프로' : '무료'}"></span><span class="acc-name">${user.email}</span>`;
     } else {
       chip.classList.remove('signed-in');
-      chip.textContent = 'Sign in';
+      chip.textContent = '로그인';
     }
   }
 

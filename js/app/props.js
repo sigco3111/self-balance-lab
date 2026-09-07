@@ -60,8 +60,8 @@ export function initProps({ scene, camera, canvas, controls, api, hud, benchRoom
     if (!raycaster.intersectObjects(targets, true).length) return false;
     const on = benchRoom.lamp.toggle();
     hud?.setStatus?.(on
-      ? 'Desk lamp on — a photoresistor on the bench sees the light'
-      : 'Desk lamp off — a photoresistor now reads dark');
+      ? '책상 위 전구가 켜졌어요 — 광저항이 빛을 감지합니다'
+      : '책상 위 전구가 꺼졌어요 — 광저항이 어둠을 읽습니다');
     e.preventDefault();
     e.stopPropagation();
     return true;
@@ -119,7 +119,7 @@ export function initProps({ scene, camera, canvas, controls, api, hud, benchRoom
         prop.position.set(p.x + 7, DRAG_Y, p.z + 7);
         prop.visible = true;
         if (hintedFor !== kind) {
-          hud?.setStatus?.('Drag the 🔥 candle up to the thermistor to heat it — watch the circuit react');
+          hud?.setStatus?.('🔥 양초를 서미스터 가까이로 끌고 가서 가열하세요 — 회로가 반응하는지 보세요');
           hintedFor = kind;
         }
       } else if (!want && prop.visible) {

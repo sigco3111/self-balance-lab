@@ -81,7 +81,7 @@ export function initDocSave(api, { onFlash } = {}) {
     api.loadDocument(initial);
     if (shared) {
       try { window.history.replaceState(null, '', window.location.pathname + window.location.search); } catch {}
-      onFlash?.('Loaded a shared build', 'ok');
+      onFlash?.('공유된 작품을 불러왔어요', 'ok');
     }
   }
 

@@ -60,19 +60,18 @@ try {
 }
 const { renderer, scene, camera, controls, resize, composer, floorUniforms, assemblyDecor, bloom, studioLights, setTheme } = sceneBits;
 
-// ── keep the 3D rig in step with the theme ──────────────────────────────
-// topbar.js owns the toggle and writes data-theme on <html>; the 3D view used
-// to ignore it entirely, so light mode was a light shell wrapped around a
-// permanently dark bench. Observing the attribute rather than taking a callback
-// keeps the two modules unaware of each other — the topbar does not need to
-// know a scene exists, and anything else that flips the theme works too.
+// ── 3D 무대를 테마에 맞춰 유지 ──────────────────────────────────────────────
+// topbar.js가 토글을 소유하고 <html>에 data-theme을 씀; 3D 뷰가 그걸 완전히 무시해서
+// 라이트 모드가 영원히 어두운 작업대를 감싼 라이트 셸이었습니다. 속성을 콜백 대신
+// 관찰하면 두 모듈이 서로 알 필요가 없습니다 — topbar는 장면이 있는지 몰라도 되고,
+// 테마를 뒤집는 다른 무엇도 동작합니다.
 function syncSceneTheme() {
   setTheme(document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark');
 }
 new MutationObserver(syncSceneTheme).observe(document.documentElement, {
   attributes: true, attributeFilter: ['data-theme'],
 });
-syncSceneTheme();   // boot: honour whatever theme localStorage restored
+syncSceneTheme();   // 부팅: localStorage가 복원한 테마를 존중
 // Feed the renderer to the perf HUD so it can show draw-call/triangle counts (no-op when the HUD is off).
 window.__perf?.setRenderer?.(renderer);
 // Optional captured-room backdrop (Gaussian splat). Inert unless a splat is
@@ -98,45 +97,44 @@ window.__view = { camera, controls, scene, renderer, setTheme }; // dev hook: ca
 // modeled decor and the procedural marble slab hide; only the lights are shared.
 // The scan group rides in assemblyDecor so RUN hides it too.
 //
-// Hidden on the live site: the modeled room won on quality, and the capture is a
-// 3.9 MB glTF that every first-time visitor was downloading for a toggle they
-// were not meant to find — which is exactly the payload the school-network
-// kill-criterion turns on. It is still one query param away for authoring work
-// (?scan to look at it, ?scanfit for the re-bake flow bench-scan.js documents),
-// and when it's off we never construct it, so the download doesn't happen.
+// 라이브 사이트에선 숨김: 모델링된 룸이 품질에서 이겼고 캡처는 모든 첫 방문자가
+// 토글을 찾으려 한 적 없는 3.9MB glTF였습니다 — 바로 학교 네트워크 차단 기준이
+// 켜지는 페이로드지요. 저작 작업용으로는 여전히 한 쿼리 파라미터 거리(?scan으로
+// 보기, ?scanfit는 bench-scan.js의 리베이크 플로)이며, 꺼져 있을 땐 절대 만들지
+// 않으니 다운로드도 일어나지 않습니다.
 const SCAN_ENABLED = /[?&]scan(fit)?\b/.test(window.location.search);
 const benchScan = SCAN_ENABLED
   ? initBenchScan({ scene })
   : { group: null, show() {}, hide() {}, isLoaded: () => false };
 if (benchScan.group) assemblyDecor.push(benchScan.group);
-// The modeled room is the default now that it's a PBR reconstruction (real
-// materials, glTF props, HDRI lighting) rather than the flat procedural stand-in
-// the capture used to beat; the toggle still swaps to the captured mesh.
+// 모델링된 룸이 이제 기본입니다 — 평면 절차적 폴 스탠드인 캡처가 두드러졌을 때보다
+// 진짜 자료·glTF 소품·HDRI 조명을 갖춘 PBR 재구성이라서; 토글은 여전히 캡처 메쉬로
+// 바꿉니다.
 const ROOM_KEY = 'sbl-room-mode';
-// a stale 'scan' choice from before it was hidden must not leave a visitor on a
-// room that will never load — the persisted preference only counts when enabled.
+// 숨기기 전의 오래된 'scan' 선택이 절대 로드되지 않을 룸에 방문자를 남겨두지 말기 —
+// 저장된 환경설정은 활성화되었을 때만 유효.
 let roomIsScan = SCAN_ENABLED && localStorage.getItem(ROOM_KEY) === 'scan';
 function setRoomMode(scan) {
   roomIsScan = scan;
-  try { localStorage.setItem(ROOM_KEY, scan ? 'scan' : 'modeled'); } catch { /* private mode */ }
+  try { localStorage.setItem(ROOM_KEY, scan ? 'scan' : 'modeled'); } catch { /* 프라이빗 모드 */ }
   benchRoom.props.visible = !scan;
   benchRoom.bench.visible = !scan;
   if (scan) benchScan.show(); else benchScan.hide();
   const btn = document.getElementById('room-toggle');
-  if (btn) btn.querySelector('span:last-child').textContent = scan ? 'Scan' : 'Modeled';
+  if (btn) btn.querySelector('span:last-child').textContent = scan ? '스캔' : '모델링';
 }
 (function mountRoomToggle() {
-  if (!SCAN_ENABLED) { setRoomMode(false); return; }   // nothing to swap to
+  if (!SCAN_ENABLED) { setRoomMode(false); return; }   // 바꿀 게 없음
   const ws = document.getElementById('workspace');
   if (!ws) return;
   const btn = document.createElement('button');
   btn.id = 'room-toggle';
   btn.type = 'button';
-  btn.title = 'Swap between the hand-modeled room and the captured 3D scan';
-  btn.innerHTML = '<span aria-hidden="true">⇄</span><span>Modeled</span>';
+  btn.title = '손 모델링 룸과 캡처된 3D 스캔 사이를 전환';
+  btn.innerHTML = '<span aria-hidden="true">⇄</span><span>모델링</span>';
   btn.addEventListener('click', () => setRoomMode(!roomIsScan));
   ws.appendChild(btn);
-  setRoomMode(roomIsScan);   // apply the default/persisted choice once the label exists
+  setRoomMode(roomIsScan);   // 기본/저장된 선택을 라벨이 존재한 뒤 한 번 적용
 })();
 window.__benchScan = benchScan;
 window.__setRoomMode = setRoomMode;
@@ -289,7 +287,7 @@ const hephaestus = initHephaestus({
   api,
   onFlash: (m, k) => hud.flash(m, k),
   getTier: () => currentTier,
-  onUpgrade: () => { track('upgrade_click', { from: 'hephaestus' }); hud.flash('Upgrade for unlimited Hephaestus — coming soon', 'ok'); },
+  onUpgrade: () => { track('upgrade_click', { from: 'hephaestus' }); hud.flash('무제한 헤파이스토스 — 곧 출시 예정', 'ok'); },
 });
 {
   const panel = document.getElementById('hephaestus');
@@ -300,7 +298,7 @@ const hephaestus = initHephaestus({
 }
 
 document.getElementById('help-btn')?.addEventListener('click', () => {
-  // bring the build guide back if it was minimized; otherwise show the welcome.
+  // 가이드를 닫았으면 다시 가져옴; 없으면 환영 화면을 표시.
   coach?.reopen?.();
   document.getElementById('overlay')?.classList.remove('hidden');
 });
@@ -325,10 +323,10 @@ initProductMotion();
 // implements for them, and the card fades out once the first part is down.
 if (window.matchMedia?.('(pointer: coarse)').matches && controlsLegend) {
   controlsLegend.innerHTML = `
-    <div class="lg-title">CONTROLS</div>
-    <div><b>Drag</b> a part in from Parts · <b>drag</b> a placed part to move</div>
-    <div><b>Tap</b> a pin, then its target pin, to wire them</div>
-    <div><b>Press and hold</b> a part or wire to remove · <b>double-tap</b> to rotate</div>`;
+    <div class="lg-title">조작</div>
+    <div><b>끌어오기</b>로 부품을 가져오기 · 배치한 부품은 <b>끌어서 이동</b></div>
+    <div><b>탭</b>으로 한 핀, 그 다음 대상 핀을 선택해 연결</div>
+    <div><b>길게 누르기</b>로 부품 또는 전선 제거 · <b>더블 탭</b>으로 회전</div>`;
   window.addEventListener('bench:placed', () => {
     setTimeout(() => controlsLegend.classList.add('faded'), 1200);
   }, { once: true });
@@ -336,14 +334,14 @@ if (window.matchMedia?.('(pointer: coarse)').matches && controlsLegend) {
 
 // ── share build ─────────────────────────────────────────────────
 document.getElementById('share-btn').addEventListener('click', async () => {
-  if (api.get_document().components.length === 0) { hud.flash('Place some parts first, then share', 'bad'); return; }
+  if (api.get_document().components.length === 0) { hud.flash('부품을 먼저 몇 개 놓은 다음 공유하세요', 'bad'); return; }
   const url = docSave.shareUrl();
   try {
     await navigator.clipboard.writeText(url);
-    hud.flash('Build link copied to clipboard', 'ok');
+    hud.flash('작품 공유 링크가 클립보드에 복사됐어요', 'ok');
   } catch {
     // clipboard blocked (insecure context / permissions) — fall back to a prompt
-    window.prompt('Copy your shareable build link:', url);
+    window.prompt('공유할 작품 링크를 복사하세요:', url);
   }
   track(EVENTS.SHARE, { components: api.get_document().components.length });
 });
@@ -373,7 +371,7 @@ const account = initAccount({
       const rs = await pullDocument('save', 0);
       if (rs && rs.v === 2 && Array.isArray(rs.components)) api.loadDocument(rs);
       await flushQueue();
-      hud.flash('Synced to your account', 'ok');
+      hud.flash('계정에 동기화되었어요', 'ok');
     } catch { /* sync is best-effort */ }
   },
 });
@@ -421,8 +419,8 @@ async function doEnterSim() {
     window.__perf?.mark('rapier');
     await creatorSim.build(api.get_document());
   } catch (e) {
-    hud.flash('Failed to start the simulation', 'bad');
-    throw e;   // surfaced to the caller (and the error boundary) instead of swallowed
+    hud.flash('시뮬레이션 시작에 실패했어요', 'bad');
+    throw e;   // 호출자(및 오류 경계)에 노출되며 삼켜지지 않음
   }
   set('mode', 'sim');
   assemblyApi.group.visible = false;   // hides parts + wires (both live under the group)
@@ -439,7 +437,7 @@ async function doEnterSim() {
   camera.position.set(14, 12, 20);
   camera.lookAt(0, 6, 0);
   hud.simHud.classList.remove('hidden');
-  hud.setStatus('It’s moving! Your circuit is powering real physics.');
+  hud.setStatus('움직이고 있어요! 회로가 진짜 물리 시뮬레이션을 구동합니다.');
   audio.startMotor();
   trackOnce(EVENTS.RUN_ENTER, { components: api.get_document().components.length });
 }

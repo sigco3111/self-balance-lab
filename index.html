@@ -1,50 +1,49 @@
 <!DOCTYPE html>
-<!-- data-theme is set HERE, not in JS, so the very first paint is already light.
-     Applying it from topbar.js meant a flash of the dark theme on every load
-     while the module graph resolved. topbar.js still overrides this from
-     localStorage for anyone who has actively chosen a theme. -->
-<html lang="en" data-theme="light">
+<!-- data-theme는 첫 페인트가 올바르게 나오도록 여기에서 설정합니다.
+     topbar.js에서 적용하면 모듈 그래프가 해결되는 동안 다크 테마가 한 번 깜빡입니다.
+     topbar.js는 localStorage에서 명시적으로 테마를 고른 사용자에 한해 여전히 덮어씁니다. -->
+<html lang="ko" data-theme="light">
 <head>
 <meta charset="UTF-8">
-<!-- viewport-fit=cover so the app can paint under the notch/home-indicator; user-scalable=no
-     stops Safari's double-tap/pinch page-zoom from stealing 3D pinch/orbit gestures. -->
+<!-- viewport-fit=cover: 노치/홈 인디케이터 아래까지 앱이 그릴 수 있도록 함.
+     user-scalable=no: Safari의 더블 탭/핀치 페이지 줌이 3D 핀치/오빗 제스처를 가로채지 않도록 함. -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>SelfBalance Lab — Robotics Creator</title>
-<meta name="description" content="Build a robot from real components in your browser, wire the circuit, and watch a physics simulation run it. A natural-language assistant builds alongside you. Zero install.">
-<!-- theme-color: dark UI chrome; media-scoped so a light-theme browser UI matches too -->
+<title>셀프밸런스 랩 — 브라우저 속 로봇 공작실</title>
+<meta name="description" content="브라우저에서 실제 전자부품을 조립해 회로를 완성하고, 물리 시뮬레이션이 회전을 멈추지 않게 만드는 법을 배워보세요. 자연어 어시스턴트가 함께 만들어 줍니다. 설치 없이 바로 시작.">
+<!-- 다크는 앱 셸, 미디어 스코프로 라이트 테마 브라우저 UI에 맞춥니다 -->
 <meta name="theme-color" content="#0c1230" media="(prefers-color-scheme: dark)">
 <meta name="theme-color" content="#edf2ff" media="(prefers-color-scheme: light)">
-<!-- iOS standalone / installable web-app polish -->
+<!-- iOS 독립 실행 / 설치 가능 웹앱 마무리 -->
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="SelfBalance">
+<meta name="apple-mobile-web-app-title" content="셀프밸런스">
 <meta name="format-detection" content="telephone=no">
-<link rel="apple-touch-icon" href="/favicon.svg">
-<link rel="canonical" href="https://selfbalance-lab.vercel.app/">
-<!-- favicon + installable manifest -->
-<link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="manifest" href="/manifest.json">
-<!-- Open Graph / Twitter (link unfurls for HN/Product Hunt/social) -->
+<link rel="apple-touch-icon" href="./favicon.svg">
+<link rel="canonical" href="./">
+<!-- 파비콘 + 설치 가능 매니페스트 -->
+<link rel="icon" href="./favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="./manifest.json">
+<!-- Open Graph / Twitter (HN/Product Hunt/소셜 링크 미리보기용) -->
 <meta property="og:type" content="website">
-<meta property="og:site_name" content="SelfBalance Lab">
-<meta property="og:title" content="SelfBalance Lab — electronics that actually work, in your browser">
-<meta property="og:description" content="Drag components onto a bench and wire them pin to pin. A real circuit solver lights the LEDs, spins the motors and catches your shorts. Zero install.">
-<meta property="og:url" content="https://selfbalance-lab.vercel.app/">
-<meta property="og:image" content="https://selfbalance-lab.vercel.app/og-cover.png">
+<meta property="og:site_name" content="셀프밸런스 랩">
+<meta property="og:title" content="셀프밸런스 랩 — 브라우저에서 정말로 동작하는 전자공작">
+<meta property="og:description" content="실제 전자부품을 작업대로 끌어다 놓고 핀끼리 연결하세요. 실제 회로 해석기가 LED를 켜고 모터를 돌리고 합선도 잡아냅니다. 설치 없이 바로 시작.">
+<meta property="og:url" content="./">
+<meta property="og:image" content="./og-cover.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="SelfBalance Lab — electronics that actually work, in your browser">
-<meta name="twitter:description" content="Drag components onto a bench and wire them pin to pin. A real circuit solver lights the LEDs, spins the motors and catches your shorts. Zero install.">
-<meta name="twitter:image" content="https://selfbalance-lab.vercel.app/og-cover.png">
-<!-- modern typography: Inter for UI chrome, JetBrains Mono for code/data -->
+<meta name="twitter:title" content="셀프밸런스 랩 — 브라우저에서 정말로 동작하는 전자공작">
+<meta name="twitter:description" content="실제 전자부품을 작업대로 끌어다 놓고 핀끼리 연결하세요. 실제 회로 해석기가 LED를 켜고 모터를 돌리고 합선도 잡아냅니다. 설치 없이 바로 시작.">
+<meta name="twitter:image" content="./og-cover.png">
+<!-- 현대적 타이포그래피: Inter는 UI, JetBrains Mono는 코드/데이터 -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
-<!-- Fontshare: Clash Display (display face) -->
+<!-- Fontshare: Clash Display (디스플레이 전용) -->
 <link rel="preconnect" href="https://api.fontshare.com">
 <link rel="preconnect" href="https://cdn.fontshare.com" crossorigin>
 <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&display=swap">
-<!-- Lucide icons (state-of-the-art SVG icon set) -->
+<!-- Lucide 아이콘 (최신 SVG 아이콘 세트) -->
 <script src="https://unpkg.com/lucide@0.462.0" defer></script>
 <link rel="stylesheet" href="css/tokens.css">
 <link rel="stylesheet" href="css/style.css">
@@ -61,102 +60,99 @@
 </script>
 </head>
 <body>
-<!-- top-bar shell: brand + active robot + theme (populated by js/app/topbar.js) -->
+<!-- 상단 바 셸: 브랜드 + 활성 로봇 + 테마 (js/app/topbar.js에서 채움) -->
 <header id="topbar"></header>
 <div id="app">
 
-  <!-- LEFT: parts tray + checklist -->
+  <!-- 왼쪽: 부품 트레이 + 체크리스트 -->
   <aside id="left-panel">
     <header class="panel-header">
       <span class="panel-icon"><i data-lucide="blocks"></i></span>
-      <span class="panel-heading"><span class="panel-kicker">BUILD</span><span class="panel-title">Pick your parts</span></span>
-      <button class="panel-min" data-panel="left-panel" aria-label="Minimize parts tray" title="Minimize">▾</button>
+      <span class="panel-heading"><span class="panel-kicker">조립</span><span class="panel-title">부품을 골라 보세요</span></span>
+      <button class="panel-min" data-panel="left-panel" aria-label="부품 트레이 접기" title="접기">▾</button>
     </header>
-    <p class="panel-intro">Drag a part into the room. Start simple—you can’t break anything here.</p>
+    <p class="panel-intro">부품을 작업대로 끌어오세요. 복잡하게 시작하지 않아도 됩니다 — 여기선 망가뜨릴 게 없어요.</p>
     <div id="auto-bar">
-      <button id="auto-instant" class="auto-btn"><i data-lucide="zap"></i><span>Auto-wire (instant)</span></button>
-      <button id="auto-step" class="auto-btn"><i data-lucide="list-ordered"></i><span>Auto-wire (step-by-step)</span></button>
+      <button id="auto-instant" class="auto-btn"><i data-lucide="zap"></i><span>자동 배선 (한 번에)</span></button>
+      <button id="auto-step" class="auto-btn"><i data-lucide="list-ordered"></i><span>자동 배선 (단계별)</span></button>
     </div>
-    <button id="clear-btn"><i data-lucide="rotate-ccw"></i><span>Start over</span></button>
+    <button id="clear-btn"><i data-lucide="rotate-ccw"></i><span>처음부터 다시</span></button>
     <div id="parts-tray"></div>
     <header class="panel-header">
       <span class="panel-icon is-yellow"><i data-lucide="cable"></i></span>
-      <span class="panel-heading"><span class="panel-kicker">CONNECTIONS</span><span class="panel-title">Make a loop</span></span>
+      <span class="panel-heading"><span class="panel-kicker">연결</span><span class="panel-title">회로를 닫아 보세요</span></span>
     </header>
     <div id="checklist">
-      <p class="hint">Place all parts, then wire them together.</p>
+      <p class="hint">부품을 모두 놓은 뒤, 서로 연결해 주세요.</p>
     </div>
   </aside>
 
-  <!-- CENTER: 3D workspace -->
+  <!-- 중앙: 3D 작업 공간 -->
   <main id="workspace">
     <div id="workspace-hud">
-      <i data-lucide="sparkles" aria-hidden="true"></i><span id="hud-status" role="status" aria-live="polite">Drag in a part and make something happen</span>
+      <i data-lucide="sparkles" aria-hidden="true"></i><span id="hud-status" role="status" aria-live="polite">부품을 끌어다 놓고 무언가 일어나게 만들어 보세요</span>
     </div>
-    <!-- First-run coach: a 5-step "build your first circuit" checklist that
-         advances by watching real app state. Hidden once completed (persisted). -->
+    <!-- 첫 실행 코치: 5단계 "첫 회로 만들기" 체크리스트.
+         실제 앱 상태를 지켜보며 진행됩니다. 완료되면 사라지고 (기억됨). -->
     <div id="coach" class="hidden" aria-live="polite">
       <div class="coach-head">
-        <span class="coach-title">Build your first circuit</span>
-        <button id="coach-dismiss" title="Dismiss" aria-label="Dismiss the guide">✕</button>
+        <span class="coach-title">첫 회로를 만들어 봅시다</span>
+        <button id="coach-dismiss" title="닫기" aria-label="가이드 닫기">✕</button>
       </div>
       <ol id="coach-steps"></ol>
     </div>
-    <button id="help-btn" title="Show the guide" aria-label="Show the guide">?</button>
-    <button id="share-btn" title="Copy a shareable link to this build" aria-label="Share this build"><i data-lucide="share-2"></i></button>
-    <button id="sound-btn" title="Toggle sound" aria-label="Toggle sound"><i data-lucide="volume-2"></i></button>
-    <button id="ambient-btn" title="Ambient rain" aria-label="Toggle ambient rain" aria-pressed="false"><i data-lucide="cloud-rain"></i></button>
+    <button id="help-btn" title="가이드 보기" aria-label="가이드 보기">?</button>
+    <button id="share-btn" title="이 작품의 공유용 링크 복사" aria-label="이 작품 공유"><i data-lucide="share-2"></i></button>
+    <button id="sound-btn" title="소리 켜기/끄기" aria-label="소리 켜기/끄기"><i data-lucide="volume-2"></i></button>
+    <button id="ambient-btn" title="빗소리 ambience" aria-label="빗소리 ambience 켜기/끄기" aria-pressed="false"><i data-lucide="cloud-rain"></i></button>
     <div id="controls-legend">
-      <div class="lg-title">QUICK MOVES</div>
-      <div><b>Drag</b> a part in · <b>drag</b> a placed part to move · <b>R</b> to rotate it</div>
-      <div><b>Click</b> a pin then its target pin to wire them</div>
-      <div><b>Right-click</b> a part or wire to remove it · empty-space drag orbits</div>
+      <div class="lg-title">빠른 동작</div>
+      <div><b>끌어다 놓기</b>로 부품을 가져오기 · 배치한 부품은 <b>끌어서 이동</b> · <b>R</b> 키로 회전</div>
+      <div><b>핀을 클릭</b>한 다음, 연결할 대상 핀을 클릭해 배선</div>
+      <div><b>오른쪽 클릭</b>으로 부품이나 전선 제거 · 빈 공간 끌기는 시점 회전</div>
     </div>
-    <!-- touch-action:none + inline overscroll guard so Safari never turns a 3D drag/orbit/pinch
-     into page scroll or rubber-band; CSS agent can move this to the stylesheet later. -->
+    <!-- touch-action:none + 인라인 오버스크롤 가드: Safari가 3D 드래그/오빗/핀치를
+     페이지 스크롤이나 러버밴드로 바꾸지 못하게 함. CSS 에이전트가 나중에 스타일시트로 옮길 수 있음. -->
 <canvas id="three-canvas" style="touch-action:none; -webkit-user-select:none; user-select:none;"></canvas>
   </main>
 
-  <!-- RIGHT: run panel. The CodeMirror firmware editor and Serial Monitor that
-       used to live here were pre-pivot: the sketch was never executed (the
-       controller was JS), so they showed code that did nothing. Gone. -->
+  <!-- 오른쪽: 실행 패널. 예전에는 여기 CodeMirror 펌웨어 편집기와 시리얼 모니터가 있었지만
+       (스케치는 실행되지 않았고 컨트롤러는 JS였기 때문에) 아무것도 안 하는 코드만 보여 줬습니다. 삭제했습니다. -->
   <aside id="right-panel">
     <header class="panel-header">
       <span class="panel-icon"><i data-lucide="message-square"></i></span>
-      <span class="panel-heading"><span class="panel-kicker">ASSISTANT</span><span class="panel-title">Hephaestus</span></span>
-      <span id="firmware-file" class="sr-only">battery → motor</span>
-      <button class="panel-min" data-panel="right-panel" aria-label="Minimize panel" title="Minimize">▾</button>
+      <span class="panel-heading"><span class="panel-kicker">어시스턴트</span><span class="panel-title">헤파이스토스</span></span>
+      <span id="firmware-file" class="sr-only">건전지 → 모터</span>
+      <button class="panel-min" data-panel="right-panel" aria-label="패널 접기" title="접기">▾</button>
     </header>
-    <!-- Hephaestus is the primary desktop sidebar. On phones, mobile.js presents
-         this same node as its own bottom sheet, preserving every listener. -->
+    <!-- 헤파이스토스는 데스크톱 사이드바의 핵심입니다. 모바일에선 mobile.js가
+         이 노드를 하단 시트로 재배치하면서 모든 리스너를 그대로 보존합니다. -->
     <div id="hephaestus" class="collapsed">
-      <button id="hephaestus-toggle" aria-label="Toggle Hephaestus"><i data-lucide="sparkles"></i><span>Open assistant</span></button>
+      <button id="hephaestus-toggle" aria-label="헤파이스토스 열기/닫기"><i data-lucide="sparkles"></i><span>어시스턴트 열기</span></button>
       <div id="hephaestus-panel">
-        <div class="hp-head"><span class="hp-avatar"><i data-lucide="bot"></i></span><span><b>Build with Hephaestus</b><small>Describe it. He’ll place and wire the parts.</small></span></div>
-        <div id="hephaestus-log"><div class="hp-msg hp-bot">What do you want to build? Try “make a light I can switch on.”</div></div>
+        <div class="hp-head"><span class="hp-avatar"><i data-lucide="bot"></i></span><span><b>헤파이스토스와 함께 만들기</b><small>원하는 것을 설명해 보세요. 부품을 올리고 배선까지 해 드립니다.</small></span></div>
+        <div id="hephaestus-log"><div class="hp-msg hp-bot">오늘은 무엇을 만들어 볼까요? "전원 스위치를 가진 조명" 같은 식으로 시작해 보세요.</div></div>
         <form id="hephaestus-form">
-          <input id="hephaestus-input" type="text" placeholder="Describe an invention…" autocomplete="off" />
-          <button type="submit" aria-label="Send"><i data-lucide="arrow-up"></i></button>
+          <input id="hephaestus-input" type="text" placeholder="만들 발명품을 묘사해 보세요…" autocomplete="off" />
+          <button type="submit" aria-label="보내기"><i data-lucide="arrow-up"></i></button>
         </form>
       </div>
     </div>
-    <section id="run-tools" aria-label="Test controls">
-      <div id="run-hint"><b>Test the build</b><span>The live circuit is ready when you are.</span></div>
-      <button id="upload-btn"><span class="run-icon"><i data-lucide="play"></i></span><span>RUN</span></button>
+    <section id="run-tools" aria-label="테스트 컨트롤">
+      <div id="run-hint"><b>조립한 회로를 시험해 보기</b><span>회로가 살아 있습니다. 준비되면 아래를 누르세요.</span></div>
+      <button id="upload-btn"><span class="run-icon"><i data-lucide="play"></i></span><span>실행</span></button>
     </section>
-    <!-- The Inspector lives here, not in the left column. The left column was
-         carrying three stacked, independently-scrolling sections while this
-         panel held a hint and a button; and this panel is already SIMULATE,
-         which is exactly what the Inspector reports on. js/app/mobile.js moves
-         this block into the phone's Circuit tab, because #right-panel is
-         display:none on a phone. -->
+    <!-- 인스펙터는 왼쪽 열이 아니라 여기에 있습니다. 왼쪽 열은 스크롤 가능한
+         섹션 셋을 쌓아 두고 이 패널은 힌트와 버튼만 가지고 있었습니다. 그런데 이 패널은 이미
+         시뮬레이트 영역이라 인스펙터가 보여 주기에 제격입니다. js/app/mobile.js가 이 블록을
+         모바일의 회로 탭으로 옮깁니다. 왜냐하면 #right-panel은 모바일에서 display:none이기 때문입니다. -->
     <div id="inspector-block">
       <header class="panel-header">
         <span class="panel-icon is-mint"><i data-lucide="activity"></i></span>
-        <span class="panel-heading"><span class="panel-kicker">CIRCUIT</span><span class="panel-title">Live readout</span></span>
+        <span class="panel-heading"><span class="panel-kicker">회로</span><span class="panel-title">실시간 측정값</span></span>
       </header>
       <div id="inspector">
-        <p class="hint">Place a battery and a motor, wire them, then hit RUN to watch it spin.</p>
+        <p class="hint">건전지와 모터를 놓고 배선한 뒤 실행을 눌러 회전을 지켜보세요.</p>
       </div>
     </div>
   </aside>
@@ -164,34 +160,34 @@
 </div>
 <div id="tooltip" class="hidden"></div>
 
-<!-- onboarding (hidden by default; hud.js reveals it for first-time visitors so it never paints-then-hides) -->
+<!-- 첫 방문자 온보딩 (기본 숨김; hud.js가 첫 방문자에게만 보여 주어 깜빡임이 없도록 함) -->
 <div id="overlay" class="hidden">
   <div class="card">
-    <div class="ov-mark"><i data-lucide="sparkles" aria-hidden="true"></i> SELFBALANCE LAB</div>
-    <h1>What will you invent today?</h1>
-    <div class="tagline">Build with real electronic parts, connect them your way, and see the science come alive—right in your browser.</div>
+    <div class="ov-mark"><i data-lucide="sparkles" aria-hidden="true"></i> 셀프밸런스 랩</div>
+    <h1>오늘은 무엇을 발명할까요?</h1>
+    <div class="tagline">실제 전자부품을 조립하고, 원하는 방식으로 연결하고, 과학이 살아 움직이는 걸 브라우저에서 바로 만나 보세요.</div>
     <div class="ov-beats">
-      <div class="ov-beat"><span class="ov-n"><i data-lucide="lightbulb"></i></span><b>Imagine</b><p>Pick an idea or dream up your own.</p></div>
-      <div class="ov-beat"><span class="ov-n"><i data-lucide="blocks"></i></span><b>Build</b><p>Place parts and connect them into a loop.</p></div>
-      <div class="ov-beat"><span class="ov-n"><i data-lucide="rocket"></i></span><b>Discover</b><p>Run it, notice what changes, and try again.</p></div>
+      <div class="ov-beat"><span class="ov-n"><i data-lucide="lightbulb"></i></span><b>상상하기</b><p>아이디어를 고르거나 스스로 떠올려 보세요.</p></div>
+      <div class="ov-beat"><span class="ov-n"><i data-lucide="blocks"></i></span><b>조립하기</b><p>부품을 내려놓고 하나의 회로로 연결해 보세요.</p></div>
+      <div class="ov-beat"><span class="ov-n"><i data-lucide="rocket"></i></span><b>발견하기</b><p>실행해 보고, 달라진 점을 살펴 보고, 다시 시도해 보세요.</p></div>
     </div>
-    <button class="start" id="overlay-start">Open my invention desk <i data-lucide="arrow-right"></i></button>
-    <button class="tour" id="overlay-tour">Or build with Hephaestus ✨</button>
+    <button class="start" id="overlay-start">발명 책상 열기 <i data-lucide="arrow-right"></i></button>
+    <button class="tour" id="overlay-tour">또는 헤파이스토스와 함께 만들기 ✨</button>
   </div>
 </div>
 
-<!-- fatal fallback: shown by js/app/errors.js on WebGL-unavailable or a boot crash -->
+<!-- 치명적 오류 폴백: js/app/errors.js가 WebGL 미지원 또는 부팅 크래시 시 보여 줌 -->
 <div id="fatal" class="hidden" role="alert">
   <div class="fatal-card">
     <div class="fatal-mark" aria-hidden="true">◐</div>
-    <h1>This lab needs a bit more from your browser</h1>
-    <p id="fatal-msg">SelfBalance Lab runs a 3D physics simulation that needs WebGL and WebAssembly.</p>
-    <p class="fatal-tips">Try a recent Chrome, Edge, Firefox, or Safari on a device with hardware graphics enabled. If you're on a work or school network, WebGL may be blocked by policy.</p>
-    <button id="fatal-reload" type="button">Reload</button>
+    <h1>이 랩은 브라우저에 조금 더 달라붙어야 합니다</h1>
+    <p id="fatal-msg">셀프밸런스 랩은 WebGL과 WebAssembly를 사용하는 3D 물리 시뮬레이션을 구동합니다.</p>
+    <p class="fatal-tips">최신 Chrome, Edge, Firefox 또는 Safari에서 하드웨어 그래픽을 켠 상태로 시도해 주세요. 회사나 학교 네트워크를 사용 중이라면 정책상 WebGL이 차단될 수 있습니다.</p>
+    <button id="fatal-reload" type="button">새로 고침</button>
   </div>
 </div>
 <noscript>
-  <div class="fatal-noscript">SelfBalance Lab needs JavaScript enabled to run. Please turn it on and reload.</div>
+  <div class="fatal-noscript">셀프밸런스 랩은 JavaScript가 켜져 있어야 동작합니다. JavaScript를 켜고 새로 고쳐 주세요.</div>
 </noscript>
 
 <script type="module" src="js/main.js"></script>

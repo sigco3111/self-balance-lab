@@ -91,7 +91,7 @@ export function pbrMaterial(name, {
   repeat = 1, physical = false, useColor = true, ...opts
 } = {}) {
   const maps = PBR_MAPS[name];
-  if (!maps) throw new Error(`unknown ambientCG material: ${name}`);
+  if (!maps) throw new Error(`알 수 없는 ambientCG 자료: ${name}`);
   const Mat = physical ? THREE.MeshPhysicalMaterial : THREE.MeshStandardMaterial;
   // The material exists immediately as flat colour; its maps attach once the
   // page has loaded. Kicking ~10 1K JPEG fetches + decodes off during module

@@ -1,15 +1,14 @@
-// Inspector panel — the DOM window into the live RobotDoc. It renders nothing it
-// owns: every value comes from `window.__api` (get_document / read_electrical /
-// read_telemetry), the same surface the tests and (later) Hephaestus drive. This is
-// the M1 replacement for the deleted Guide rail — it surfaces the electrical
-// solve and its violations, which previously had no on-screen home.
+// 인스펙터 패널 — 살아 있는 RobotDoc을 들여다보는 DOM 창. 보유한 것은 아무것도 그리지 않습니다:
+// 모든 값은 `window.__api`(get_document / read_electrical / read_telemetry)에서 옵니다.
+// 테스트와 (이후) 헤파이스토스가 구동하는 바로 그 표면입니다. 이전의 가이드 레일을 대체하는
+// M1 항목입니다 — 가이드를 삭제하면서 화면의 자리가 없었던 전기 해석과 위반을 가져옵니다.
 //
-// The only mutation it does is inline param edits, which still funnel through
-// `api.set_param` — no mutation logic lives here.
+// 인스펙터가 직접 수행하는 유일한 변경은 인라인 파라미터 편집이며, 그것조차도
+// `api.set_param`을 거칩니다 — 어떤 변경 로직도 여기에 살지 않습니다.
 
 const fmt = (n, d = 2) => (Number.isFinite(n) ? n.toFixed(d) : '—');
 
-// Adaptive current readout: mA below an amp so LEDs read cleanly, A above.
+// 적응형 전류 표시: 1A 미만일 때는 mA 단위로(LED가 깔끔히 읽히도록), 1A 이상은 A 단위로.
 function fmtCurrent(i) {
   if (!Number.isFinite(i)) return { value: '—', unit: '' };
   const a = Math.abs(i);
@@ -17,14 +16,14 @@ function fmtCurrent(i) {
   return { value: fmt(a, 2), unit: 'A' };
 }
 
-// Friendly display names for component types (keeps cards readable). Falls back
-// to a Title-cased type for anything not listed, so new parts still look tidy.
+// 부품 타입의 친근한 표시 이름 (카드가 읽기 쉽도록 함). 나열되지 않은 것은
+// Title-cased 타입으로 대체되어, 새 부품도 깔끔하게 보입니다.
 const TYPE_LABEL = {
-  battery: 'Battery', motor: 'Motor', resistor: 'Resistor', switch: 'Switch',
-  potentiometer: 'Potentiometer', led: 'LED', push_button: 'Push Button',
-  lamp: 'Lamp', buzzer: 'Buzzer', diode: 'Diode', photoresistor: 'Photoresistor',
-  thermistor: 'Thermistor', fuse: 'Fuse', capacitor: 'Capacitor', servo: 'Servo',
-  relay: 'Relay',
+  battery: '건전지', motor: '모터', resistor: '저항', switch: '스위치',
+  potentiometer: '가변저항', led: 'LED', push_button: '푸시 버튼',
+  lamp: '전구', buzzer: '버저', diode: '다이오드', photoresistor: '광저항',
+  thermistor: '서미스터', fuse: '퓨즈', capacitor: '커패시터', servo: '서보',
+  relay: '릴레이',
 };
 function typeLabel(t) {
   if (TYPE_LABEL[t]) return TYPE_LABEL[t];
@@ -32,38 +31,38 @@ function typeLabel(t) {
   return base.replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
-// Human labels + step for the params worth exposing in the inspector. Anything
-// not listed stays hidden (internal bookkeeping the user shouldn't poke). New
-// component types reuse these names where they can; unknown params are dropped
-// gracefully by the PARAM_META lookup in paramsHtml().
+// 인스펙터에 노출할 가치가 있는 파라미터의 사람이 읽는 라벨과 step. 나열되지 않은
+// 파라미터는 숨겨진 채로 남습니다 (사용자가 만지면 안 되는 내부값). 새 부품 타입은
+// 가능한 한 이 라벨을 재사용; 알려지지 않은 파라미터는 paramsHtml()의 PARAM_META
+// 조회를 통해 우아하게 버려집니다.
 const PARAM_META = {
-  // canonical (library today)
-  voltsNominal: { label: 'Volts', step: 0.1, unit: 'V' },
-  internalResistance: { label: 'Int. R', step: 0.1, unit: 'Ω' },
+  // 표준 (현재 라이브러리)
+  voltsNominal: { label: '전압', step: 0.1, unit: 'V' },
+  internalResistance: { label: '내부 R', step: 0.1, unit: 'Ω' },
   resistance: { label: 'R', step: 1, unit: 'Ω' },
-  maxResistance: { label: 'Max R', step: 10, unit: 'Ω' },   // rheostat / pot knob range
+  maxResistance: { label: '최대 R', step: 10, unit: 'Ω' },   // 레오스타트 / 포텐셔미터 노브 범위
   forwardVoltage: { label: 'Vꜰ', step: 0.1, unit: 'V' },
   ke: { label: 'Kᴇ', step: 0.01, unit: '' },
-  friction: { label: 'Friction', step: 0.001, unit: '' },
-  maxCurrent: { label: 'I max', step: 1, unit: 'A' },
-  closed: { label: 'Closed', bool: true },
-  // short aliases new components may use (guarded: only rendered if present)
-  volts: { label: 'Volts', step: 0.1, unit: 'V' },
+  friction: { label: '마찰', step: 0.001, unit: '' },
+  maxCurrent: { label: 'I 최대', step: 1, unit: 'A' },
+  closed: { label: '닫힘', bool: true },
+  // 새 부품이 쓸 수 있는 짧은 별칭 (가드: 있을 때만 렌더)
+  volts: { label: '전압', step: 0.1, unit: 'V' },
   vf: { label: 'Vꜰ', step: 0.1, unit: 'V' },
-  imax: { label: 'I max', step: 1, unit: 'A' },
-  // new scalars for the incoming parts
-  capacitanceUf: { label: 'C', step: 1, unit: 'µF' },    // capacitor (matches library param id)
-  angle: { label: 'Angle', step: 1, unit: '°' },          // servo
-  light: { label: 'Light', step: 1, unit: '%' },          // photoresistor exposure
-  temperature: { label: 'Temp', step: 1, unit: '°C' },    // thermistor
+  imax: { label: 'I 최대', step: 1, unit: 'A' },
+  // 들어오는 새 부품의 새 스칼라
+  capacitanceUf: { label: 'C', step: 1, unit: 'µF' },    // 커패시터 (라이브러리 파라미터 ID와 매치)
+  angle: { label: '각도', step: 1, unit: '°' },          // 서보
+  light: { label: '빛', step: 1, unit: '%' },          // 광저항 노출
+  temperature: { label: '온도', step: 1, unit: '°C' },    // 서미스터
 };
 
 export function initInspector(api, { getMode } = {}) {
   const host = document.getElementById('inspector');
   if (!host) return { refresh() {} };
 
-  // Don't clobber a field the user is actively editing (the 400ms poll would
-  // otherwise re-innerHTML mid-keystroke and drop focus).
+  // 사용자가 활발히 편집 중인 필드는 덮어쓰지 않습니다 (그대로 두면 400ms 폴이
+  // 키 입력 도중에 innerHTML을 갱신해 포커스를 떨어뜨립니다).
   function isEditing() {
     const a = document.activeElement;
     return a && host.contains(a) && (a.tagName === 'INPUT' || a.tagName === 'SELECT');
@@ -78,8 +77,8 @@ export function initInspector(api, { getMode } = {}) {
     const running = getMode ? getMode() === 'sim' : false;
 
     if (comps.length === 0) {
-      host.innerHTML = `<div class="insp-empty"><i data-lucide="cable"></i><b>Nothing connected yet</b><p>Add two parts and join their pins to see what the electricity is doing.</p></div>`;
-      try { window.lucide?.createIcons(); } catch { /* icons are best-effort */ }
+      host.innerHTML = `<div class="insp-empty"><i data-lucide="cable"></i><b>아직 연결된 것이 없어요</b><p>두 부품을 놓고 핀을 연결하면 전기가 어떻게 흐르는지 보입니다.</p></div>`;
+      try { window.lucide?.createIcons(); } catch { /* 아이콘은 부가 기능 */ }
       return;
     }
 
@@ -99,14 +98,14 @@ export function initInspector(api, { getMode } = {}) {
       const live = Number.isFinite(i) && Math.abs(i) > 1e-4;
       const dir = live ? `<span class="insp-dir">${i >= 0 ? '▲' : '▼'}</span>` : '';
       const ampsReading = Number.isFinite(i)
-        ? `<span class="insp-amps ${live ? 'is-live' : ''}" title="current through ${esc(c.id)}">
+        ? `<span class="insp-amps ${live ? 'is-live' : ''}" title="${esc(c.id)}를 흐르는 전류">
              ${dir}<b>${cur.value}</b><i class="insp-unit">${cur.unit}</i>
            </span>`
-        : `<span class="insp-amps insp-idle" title="no current">—</span>`;
-      // motor speed, when the sim is live and reporting ω for this motor
+        : `<span class="insp-amps insp-idle" title="전류 없음">—</span>`;
+      // 시뮬레이션이 라이브일 때 이 모터의 ω 보고
       const w = tel?.omega?.[c.id];
       const speed = Number.isFinite(w)
-        ? `<span class="insp-omega" title="shaft speed">${fmt(w, 1)}<i class="insp-unit">rad/s</i></span>`
+        ? `<span class="insp-omega" title="축 속도">${fmt(w, 1)}<i class="insp-unit">rad/s</i></span>`
         : '';
       return `<div class="insp-comp" data-type="${esc(c.type)}">
         <div class="insp-comp-head">
@@ -117,11 +116,11 @@ export function initInspector(api, { getMode } = {}) {
         ${paramsHtml(c)}
       </div>`;
     }).join('');
-    return `<div class="insp-sect"><div class="insp-h">YOUR PARTS <span class="insp-count">${comps.length}</span></div>${rows}</div>`;
+    return `<div class="insp-sect"><div class="insp-h">내 부품 <span class="insp-count">${comps.length}</span></div>${rows}</div>`;
   }
 
-  // Editable param row(s) for one component — the tunable knobs from PARAM_META.
-  // Params without a PARAM_META entry are silently skipped (unknown-param guard).
+  // 한 부품의 편집 가능한 파라미터 행 — PARAM_META에서 나온 튜닝 노브.
+  // PARAM_META 항목이 없는 파라미터는 조용히 건너뜁니다 (알려지지 않은 파라미터 가드).
   function paramsHtml(c) {
     const params = c.params || {};
     const keys = Object.keys(params).filter(k => PARAM_META[k]);
@@ -147,24 +146,24 @@ export function initInspector(api, { getMode } = {}) {
 
   function netsHtml(nets) {
     if (nets.length === 0) {
-      return `<div class="insp-sect"><div class="insp-h">WIRES</div><p class="hint">Connect two pins to make your first path.</p></div>`;
+      return `<div class="insp-sect"><div class="insp-h">전선</div><p class="hint">두 핀을 연결해 첫 번째 경로를 만드세요.</p></div>`;
     }
     const rows = nets.map((n) => `<div class="insp-net">
       <span class="insp-swatch" style="background:${esc(n.color || '#888')}"></span>
       <span class="insp-eps">${n.endpoints.map(esc).join(' · ')}</span>
     </div>`).join('');
-    return `<div class="insp-sect"><div class="insp-h">WIRES <span class="insp-count">${nets.length}</span></div>${rows}</div>`;
+    return `<div class="insp-sect"><div class="insp-h">전선 <span class="insp-count">${nets.length}</span></div>${rows}</div>`;
   }
 
-  // Plain-language coaching for each violation code — the "why + what to do".
+  // 각 위반 코드에 대한 평이한 안내 — "왜 + 어떻게".
   function hintFor(v) {
     switch (v.code) {
       case 'short':
-        return 'Both terminals sit on the same wire, so current races straight through with nothing to limit it. Put a load (a resistor, motor, or LED) between + and −.';
+        return '두 단자가 같은 전선 위에 있어 전류가 제한 없이 곧장 흘러갑니다. + 와 − 사이에 부하(저항, 모터 또는 LED)를 두세요.';
       case 'over-current':
-        return 'More current is flowing than this part can safely handle. Add a resistor in series, or lower the supply voltage, to bring it down.';
+        return '이 부품이 견딜 수 있는 것보다 더 많은 전류가 흐르고 있습니다. 직렬로 저항을 추가하거나 공급 전압을 낮춰 보세요.';
       case 'floating-pin':
-        return 'This pin isn’t connected to anything yet — wire it into the circuit to complete the loop.';
+        return '이 핀이 아직 어디에도 연결되지 않았습니다. 회로를 완성하려면 전선에 연결하세요.';
       default:
         return '';
     }
@@ -173,12 +172,12 @@ export function initInspector(api, { getMode } = {}) {
   function violationsHtml(elec) {
     const vs = elec.violations || [];
     if (vs.length === 0) {
-      return `<div class="insp-sect"><div class="insp-ok"><span class="insp-ok-mark">✓</span><span><b>Looking good</b><small>Circuit OK — no safety problems.</small></span></div></div>`;
+      return `<div class="insp-sect"><div class="insp-ok"><span class="insp-ok-mark">✓</span><span><b>좋아요</b><small>회로 정상 — 안전 문제 없음.</small></span></div></div>`;
     }
     const errN = vs.filter(v => (v.level || 'warn') === 'error').length;
     const summary = errN
-      ? `${errN} problem${errN > 1 ? 's' : ''} to fix`
-      : `${vs.length} thing${vs.length > 1 ? 's' : ''} to check`;
+      ? `해결할 문제 ${errN}개`
+      : `확인할 부분 ${vs.length}개`;
     const rows = vs.map((v) => {
       const level = esc(v.level || 'warn');
       const hint = hintFor(v);
@@ -196,7 +195,7 @@ export function initInspector(api, { getMode } = {}) {
     </div>`;
   }
 
-  // Live param edits → api.set_param. Delegated so it survives re-renders.
+  // 라이브 파라미터 편집 → api.set_param. 위임되어 재렌더링에서도 살아남음.
   function onEdit(e) {
     const el = e.target;
     if (!el.dataset || !el.dataset.comp) return;
@@ -208,13 +207,13 @@ export function initInspector(api, { getMode } = {}) {
       if (!Number.isFinite(value)) return;
     }
     api.set_param({ id, key, value });
-    if (el.type === 'checkbox') render();   // blur-free; refresh switch state now
+    if (el.type === 'checkbox') render();   // 블러 없이; 스위치 상태를 즉시 갱신
   }
   host.addEventListener('change', onEdit);
 
-  // poll: the doc mutates through the API from many places (drag/drop, wiring,
-  // undo, scripts) and the solve changes every sim frame — a light poll keeps
-  // the panel honest without every mutation path having to call us.
+  // 폴: 문서는 여러 곳에서 (드래그/드롭, 배선, 실행 취소, 스크립트) API를 통해 변경되며
+  // 해석은 매 시뮬레이션 프레임마다 바뀝니다 — 가벼운 폴은 모든 변경 경로가 호출하지 않고도
+  // 패널을 정직하게 유지합니다.
   render();
   const timer = setInterval(render, 400);
 

@@ -1,12 +1,12 @@
 {
-  "name": "SelfBalance Lab — Robotics Creator",
-  "short_name": "SelfBalance",
-  "description": "Build a circuit from real components in your browser, wire it pin to pin, and watch a real solver and physics sim run it.",
+  "name": "셀프밸런스 랩 — 브라우저 속 로봇 공작실",
+  "short_name": "셀프밸런스",
+  "description": "브라우저에서 실제 부품으로 회로를 조립하고, 핀끼리 연결한 뒤 실제 해석기와 물리 시뮬레이션이 회전을 멈추지 않게 만드는 법을 배워보세요.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0a0d12",
   "theme_color": "#0a0d12",
   "icons": [
-    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+    { "src": "./favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
   ]
 }

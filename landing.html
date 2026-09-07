@@ -1,20 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>SelfBalance Lab — Robotics simulation, minus the learning curve</title>
-<meta name="description" content="SelfBalance Lab is a premium, friendly robotics simulator in your browser. Drag real components onto a bench, wire the circuit, let a real DC solver light LEDs and drive motors, then RUN a physics sim. An AI co-builder wires it for you. Zero install.">
+<title>셀프밸런스 랩 — 학습 곡선 없는 로봇 시뮬레이션</title>
+<meta name="description" content="셀프밸런스 랩은 브라우저에서 즐기는 친근한 프리미엄 로봇 시뮬레이터입니다. 실제 부품을 작업대로 끌어다 놓고 회로를 연결하면, 진짜 DC 해석기가 LED를 켜고 모터를 돌립니다. 그리고 AI 공동 작업자가 그 회로를 함께 만들어 줍니다. 설치가 필요 없습니다.">
 <meta name="theme-color" content="#0a0d12" media="(prefers-color-scheme: dark)">
 <meta name="theme-color" content="#f7f9fc" media="(prefers-color-scheme: light)">
-<link rel="apple-touch-icon" href="/favicon.svg">
-<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="./favicon.svg">
+<link rel="icon" href="./favicon.svg" type="image/svg+xml">
 <!-- Open Graph -->
 <meta property="og:type" content="website">
-<meta property="og:site_name" content="SelfBalance Lab">
-<meta property="og:title" content="SelfBalance Lab — robotics simulation without the steep learning curve">
-<meta property="og:description" content="Drag real components onto a bench, wire the circuit, and watch a real physics sim run it. An AI co-builder wires it for you. Runs in the browser.">
-<!-- fonts: same faces the app uses -->
+<meta property="og:site_name" content="셀프밸런스 랩">
+<meta property="og:title" content="셀프밸런스 랩 — 가파르지 않은 학습 곡선을 가진 로봇 시뮬레이션">
+<meta property="og:description" content="실제 부품을 작업대로 끌어다 놓고, 회로를 연결한 다음, 실제 물리 시뮬레이션이 작동시키는 모습을 지켜보세요. AI 공동 작업자가 배선까지 도와 줍니다. 브라우저에서 바로 동작합니다.">
+<!-- 앱과 동일한 폰트 -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
@@ -24,172 +24,172 @@
 <link rel="stylesheet" href="css/landing.css">
 </head>
 <body>
-<a class="skip" href="#main">Skip to content</a>
+<a class="skip" href="#main">콘텐츠로 건너뛰기</a>
 
 <header class="nav">
   <div class="wrap">
-    <a class="brand" href="#top" aria-label="SelfBalance Lab home"><span class="dot" aria-hidden="true"></span>SelfBalance Lab</a>
-    <nav class="nav-links" aria-label="Primary">
-      <a class="ghost" href="#features">Features</a>
-      <a class="ghost" href="#how">How it works</a>
-      <a class="ghost" href="#pricing">Pricing</a>
-      <a class="btn btn-primary" href="index.html">Launch the Lab</a>
+    <a class="brand" href="#top" aria-label="셀프밸런스 랩 홈"><span class="dot" aria-hidden="true"></span>셀프밸런스 랩</a>
+    <nav class="nav-links" aria-label="기본 탐색">
+      <a class="ghost" href="#features">주요 기능</a>
+      <a class="ghost" href="#how">사용 방법</a>
+      <a class="ghost" href="#pricing">가격</a>
+      <a class="btn btn-primary" href="index.html">랩 시작하기</a>
     </nav>
   </div>
 </header>
 
 <main id="main">
 
-  <!-- ── HERO ─────────────────────────────────────── -->
+  <!-- ── 헤로 ────────────────────────────────────────────────── -->
   <section class="hero" id="top">
     <div class="wrap">
-      <p class="eyebrow reveal"><span class="spark" aria-hidden="true"></span> Browser-native robotics simulator</p>
-      <h1 class="headline reveal">Robotics simulation, <span class="grad">minus the learning curve.</span></h1>
-      <p class="subhead reveal">Isaac Sim and Gazebo are powerful — and brutal to start. SelfBalance Lab gives you the same build-wire-simulate loop in a friendly, zero-install browser lab. Drag real components onto a bench, wire the pins, and a genuine DC-circuit solver lights LEDs and drives motors before you even hit RUN.</p>
+      <p class="eyebrow reveal"><span class="spark" aria-hidden="true"></span> 브라우저 기반 로봇 시뮬레이터</p>
+      <h1 class="headline reveal">로봇 시뮬레이션, <span class="grad">학습 곡선 없이.</span></h1>
+      <p class="subhead reveal">Isaac Sim과 Gazebo는 강력하지만 시작이 가파릅니다. 셀프밸런스 랩은 같은 조립-배선-시뮬레이션 루프를 친근하고 설치 없는 브라우저 랩으로 제공합니다. 실제 부품을 작업대로 끌어다 놓고 핀을 연결하면, 진짜 DC 회로 해석기가 LED를 켜고 모터를 돌립니다 — 실행 버튼을 누르기 전부터요.</p>
       <div class="hero-cta reveal">
-        <a class="btn btn-primary btn-lg" href="index.html">Launch the Lab</a>
-        <a class="btn btn-ghost btn-lg" href="#how">See how it works</a>
+        <a class="btn btn-primary btn-lg" href="index.html">랩 시작하기</a>
+        <a class="btn btn-ghost btn-lg" href="#how">동작 방식 보기</a>
       </div>
       <div class="hero-meta reveal">
-        <span><i class="ok" aria-hidden="true"></i> No install, no sign-up to try</span>
-        <span><i class="ok" aria-hidden="true"></i> Runs on iPad &amp; iPhone</span>
-        <span><i class="ok" aria-hidden="true"></i> Real circuit + real physics</span>
+        <span><i class="ok" aria-hidden="true"></i> 설치 없이, 가입 없이 바로 사용</span>
+        <span><i class="ok" aria-hidden="true"></i> 아이패드와 아이폰에서 동작</span>
+        <span><i class="ok" aria-hidden="true"></i> 진짜 회로와 진짜 물리</span>
       </div>
 
-      <figure class="hero-visual reveal" aria-label="Illustration of the SelfBalance Lab build bench: a battery, motor, LED and switch wired into a live circuit.">
+      <figure class="hero-visual reveal" aria-label="셀프밸런스 랩 작업대 일러스트: 건전지, 모터, LED, 스위치가 회로로 연결된 모습.">
         <div class="hv-bar">
           <span class="tl a"></span><span class="tl b"></span><span class="tl c"></span>
-          <span class="title">selfbalance — build bench</span>
+          <span class="title">셀프밸런스 — 조립 작업대</span>
         </div>
         <div class="hv-stage">
-          <div class="chip"><div class="ico" aria-hidden="true">🔋</div><div class="nm">battery</div></div>
-          <div class="chip live"><div class="ico" aria-hidden="true">⚙️</div><div class="nm">motor · driven</div></div>
-          <div class="chip"><div class="ico" aria-hidden="true">🎚️</div><div class="nm">potentiometer</div></div>
-          <div class="chip live"><div class="ico" aria-hidden="true">💡</div><div class="nm">LED · lit</div></div>
-          <div class="chip"><div class="ico" aria-hidden="true">🔀</div><div class="nm">switch</div></div>
-          <span class="wire-lbl">◉ solver: circuit OK · 42 mA flowing</span>
+          <div class="chip"><div class="ico" aria-hidden="true">🔋</div><div class="nm">건전지</div></div>
+          <div class="chip live"><div class="ico" aria-hidden="true">⚙️</div><div class="nm">모터 · 구동 중</div></div>
+          <div class="chip"><div class="ico" aria-hidden="true">🎚️</div><div class="nm">가변저항</div></div>
+          <div class="chip live"><div class="ico" aria-hidden="true">💡</div><div class="nm">LED · 점등</div></div>
+          <div class="chip"><div class="ico" aria-hidden="true">🔀</div><div class="nm">스위치</div></div>
+          <span class="wire-lbl">◉ 해석기: 회로 정상 · 42 mA 흐름</span>
         </div>
       </figure>
     </div>
   </section>
 
-  <!-- ── FEATURES ─────────────────────────────────── -->
+  <!-- ── 주요 기능 ──────────────────────────────────────────────── -->
   <section id="features">
     <div class="wrap">
       <div class="sec-head">
-        <p class="kicker">What's inside</p>
-        <h2>A real lab, not a toy diagram.</h2>
-        <p>Every part behaves the way its real-world twin does. Wire it wrong and you'll see the short — wire it right and it comes alive.</p>
+        <p class="kicker">구성 요소</p>
+        <h2>장난감이 아니라 진짜 랩입니다.</h2>
+        <p>모든 부품은 실제 세계의 쌍둥이처럼 동작합니다. 잘못 연결하면 합선이 잡혀 나오고, 제대로 연결하면 살아납니다.</p>
       </div>
       <div class="features">
         <article class="card">
           <div class="fico" aria-hidden="true">🔌</div>
-          <h3>A real circuit solver</h3>
-          <p>Modified Nodal Analysis under the hood. Batteries and motors are true voltage sources, LEDs are nonlinear diodes, and it flags shorts and over-current live as you wire.</p>
+          <h3>진짜 회로 해석기</h3>
+          <p>뒷단에서는 Modified Nodal Analysis가 돌아갑니다. 건전지와 모터는 실제 전압원, LED는 비선형 다이오드, 합선과 과전류는 연결하는 즉시 표시됩니다.</p>
         </article>
         <article class="card">
           <div class="fico" aria-hidden="true">🧩</div>
-          <h3>Tons of components + search</h3>
-          <p>Batteries, motors, resistors, switches, LEDs, potentiometers and more — each with real pins and parameters. Find any part fast and drop it straight onto the bench.</p>
+          <h3>풍부한 부품 + 검색</h3>
+          <p>건전지, 모터, 저항, 스위치, LED, 가변저항 등 — 모두 실제 핀과 파라미터를 가집니다. 원하는 부품을 빠르게 찾아 작업대에 바로 내려놓으세요.</p>
         </article>
         <article class="card">
           <div class="fico" aria-hidden="true">🤖</div>
-          <h3>Hephaestus, your AI co-builder</h3>
-          <p>Describe what you want in plain language. Hephaestus places components, wires the pins, and tunes parameters for you — then explains what it did.</p>
+          <h3>헤파이스토스, AI 공동 작업자</h3>
+          <p>평범한 말로 원하는 것을 설명하세요. 헤파이스토스가 부품을 놓고, 핀을 연결하고, 파라미터까지 조정한 뒤 무엇을 했는지 설명해 줍니다.</p>
         </article>
         <article class="card">
           <div class="fico" aria-hidden="true">🎢</div>
-          <h3>Physics simulation on RUN</h3>
-          <p>Hit RUN and the solved motor current becomes real torque in a Rapier physics world. Watch your build actually move, spin, and settle under gravity.</p>
+          <h3>실행 시 실제 물리 시뮬레이션</h3>
+          <p>실행을 누르면 해석된 모터 전류가 Rapier 물리 세계에서 실제 토크로 바뀝니다. 만든 작품이 실제로 움직이고, 돌고, 중력을 받는 모습을 보세요.</p>
         </article>
         <article class="card">
           <div class="fico" aria-hidden="true">📱</div>
-          <h3>Runs in the browser</h3>
-          <p>No downloads, no toolchains, no drivers. WebGL and WebAssembly do the heavy lifting, so it's smooth on a laptop and touch-friendly on iPad and iPhone.</p>
+          <h3>브라우저에서 동작</h3>
+          <p>다운로드도, 툴체인도, 드라이버도 없습니다. WebGL과 WebAssembly가 무거운 일을 처리해서 노트북에서도, 아이패드와 아이폰의 터치에서도 부드럽게 동작합니다.</p>
         </article>
         <article class="card">
           <div class="fico" aria-hidden="true">⚡</div>
-          <h3>Live feedback everywhere</h3>
-          <p>Charge visibly flows along wires at solved speed, LEDs glow in proportion to current, and a powered motor's wheel spins — all before you enter the sim.</p>
+          <h3>즉각적인 피드백</h3>
+          <p>전선 위의 전하 흐름이 해석된 속도에 맞춰 살아 움직이고, LED는 전류에 비례해 빛나며, 전력이 공급된 모터의 바퀴는 미리 돌아갑니다 — 시뮬레이션에 진입하기 전부터요.</p>
         </article>
       </div>
     </div>
   </section>
 
-  <!-- ── HOW IT WORKS ─────────────────────────────── -->
+  <!-- ── 사용 방법 ───────────────────────────────────────────────── -->
   <section id="how">
     <div class="wrap">
       <div class="sec-head">
-        <p class="kicker">How it works</p>
-        <h2>From empty bench to running robot in three steps.</h2>
+        <p class="kicker">사용 방법</p>
+        <h2>빈 작업대에서 동작하는 로봇까지, 단 세 걸음.</h2>
       </div>
       <div class="steps">
         <div class="step">
           <div class="num" aria-hidden="true">1</div>
-          <h3>Place your parts</h3>
-          <p>Drag components from the tray onto the bench. They fall, collide, and settle with real gravity, just like the real thing.</p>
+          <h3>부품을 내려놓기</h3>
+          <p>트레이에서 부품을 작업대로 끌어오세요. 중력에 따라 떨어지고 부딪히고 자리를 잡습니다 — 진짜 부품처럼요.</p>
         </div>
         <div class="step">
           <div class="num" aria-hidden="true">2</div>
-          <h3>Wire the circuit</h3>
-          <p>Click pin to pin to connect. The solver runs instantly — LEDs light, motors throttle, and shorts glow red. Or just ask Hephaestus to wire it.</p>
+          <h3>회로를 연결하기</h3>
+          <p>핀을 클릭해 연결하세요. 해석기는 즉시 동작하고 — LED가 켜지고, 모터가 돌고, 합선은 빨갛게 표시됩니다. 또는 헤파이스토스에게 배선을 맡겨도 됩니다.</p>
         </div>
         <div class="step">
           <div class="num" aria-hidden="true">3</div>
-          <h3>Hit RUN</h3>
-          <p>Enter the physics sim and drive the motor your circuit powers. Tune a value, re-run, and see the difference immediately.</p>
+          <h3>실행하기</h3>
+          <p>물리 시뮬레이션으로 들어가 회로가 작동시키는 모터의 회전을 확인하세요. 값을 조금씩 바꿔 보고, 다시 실행해 보세요 — 차이가 즉시 보입니다.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ── PRICING ──────────────────────────────────── -->
+  <!-- ── 가격 ───────────────────────────────────────────────────── -->
   <section id="pricing">
     <div class="wrap">
       <div class="sec-head">
-        <p class="kicker">Pricing</p>
-        <h2>Free to try. Buy once to keep.</h2>
-        <p>Start building in seconds. When you're ready, unlock the full component library and AI co-builder with a single purchase — no subscription.</p>
+        <p class="kicker">가격</p>
+        <h2>무료로 시작하고, 한 번 결제로 영원히 소유.</h2>
+        <p>몇 초 만에 만들기 시작하세요. 준비가 되면, 단일 결제로 전체 부품 라이브러리와 AI 공동 작업자를 영원히 잠금 해제하세요 — 구독료는 없습니다.</p>
       </div>
       <div class="pricing">
         <article class="plan">
-          <p class="tag">Free</p>
-          <div class="price">$0</div>
-          <p class="once">Full access to the core lab</p>
+          <p class="tag">무료</p>
+          <div class="price">₩0</div>
+          <p class="once">핵심 랩의 모든 기능을 그대로</p>
           <ul>
-            <li><span class="ck" aria-hidden="true">✓</span> The full circuit solver &amp; physics sim</li>
-            <li><span class="ck" aria-hidden="true">✓</span> Core components + wiring</li>
-            <li><span class="ck" aria-hidden="true">✓</span> A daily allowance of Hephaestus AI messages</li>
-            <li><span class="ck" aria-hidden="true">✓</span> Runs on any modern browser</li>
+            <li><span class="ck" aria-hidden="true">✓</span> 전체 회로 해석기와 물리 시뮬레이션</li>
+            <li><span class="ck" aria-hidden="true">✓</span> 핵심 부품과 배선</li>
+            <li><span class="ck" aria-hidden="true">✓</span> 헤파이스토스 AI 메시지의 일일 허용량</li>
+            <li><span class="ck" aria-hidden="true">✓</span> 모든 최신 브라우저에서 동작</li>
           </ul>
-          <a class="btn btn-ghost" href="index.html">Launch the Lab</a>
+          <a class="btn btn-ghost" href="index.html">랩 시작하기</a>
         </article>
         <article class="plan pro">
-          <span class="badge-pop" aria-hidden="true">Best value</span>
-          <p class="tag">Pro — one-time</p>
-          <div class="price">$49 <small>once</small></div>
-          <p class="once">Yours forever. No subscription.</p>
+          <span class="badge-pop" aria-hidden="true">가장 인기</span>
+          <p class="tag">프로 — 1회 결제</p>
+          <div class="price">₩69,000 <small>1회</small></div>
+          <p class="once">영원히 당신의 것. 구독료 없음.</p>
           <ul>
-            <li><span class="ck" aria-hidden="true">✓</span> Everything in Free</li>
-            <li><span class="ck" aria-hidden="true">✓</span> The complete component library</li>
-            <li><span class="ck" aria-hidden="true">✓</span> Unlimited Hephaestus AI co-builder</li>
-            <li><span class="ck" aria-hidden="true">✓</span> Save, share &amp; export your builds</li>
-            <li><span class="ck" aria-hidden="true">✓</span> All future updates included</li>
+            <li><span class="ck" aria-hidden="true">✓</span> 무료 플랜의 모든 것</li>
+            <li><span class="ck" aria-hidden="true">✓</span> 전체 부품 라이브러리</li>
+            <li><span class="ck" aria-hidden="true">✓</span> 헤파이스토스 AI 공동 작업자 무제한 사용</li>
+            <li><span class="ck" aria-hidden="true">✓</span> 작품 저장, 공유, 내보내기</li>
+            <li><span class="ck" aria-hidden="true">✓</span> 앞으로의 모든 업데이트 포함</li>
           </ul>
-          <a class="btn btn-primary" href="index.html">Start free, upgrade anytime</a>
+          <a class="btn btn-primary" href="index.html">무료로 시작하고, 언제든 업그레이드</a>
         </article>
       </div>
     </div>
   </section>
 
-  <!-- ── FINAL CTA ────────────────────────────────── -->
+  <!-- ── 마지막 행동 유도 ─────────────────────────────────────── -->
   <section class="cta-band">
     <div class="wrap">
       <div class="cta-inner">
-        <p class="kicker">Ready when you are</p>
-        <h2>Build your first working circuit in under a minute.</h2>
-        <p>No account, no install. Just open the lab and start dragging parts.</p>
-        <a class="btn btn-primary btn-lg" href="index.html">Launch the Lab</a>
+        <p class="kicker">준비되셨나요</p>
+        <h2>1분도 안 되어 첫 번째 동작하는 회로를 만들 수 있습니다.</h2>
+        <p>계정도, 설치도 없습니다. 랩을 열고 부품부터 끌어오세요.</p>
+        <a class="btn btn-primary btn-lg" href="index.html">랩 시작하기</a>
       </div>
     </div>
   </section>
@@ -198,14 +198,14 @@
 
 <footer>
   <div class="wrap">
-    <div class="fbrand"><span class="dot" style="width:11px;height:11px;border-radius:50%;background:var(--accent);display:inline-block;"></span> SelfBalance Lab</div>
-    <nav aria-label="Footer">
-      <a href="index.html">Launch the Lab</a>
-      <a href="#features">Features</a>
-      <a href="#how">How it works</a>
-      <a href="#pricing">Pricing</a>
+    <div class="fbrand"><span class="dot" style="width:11px;height:11px;border-radius:50%;background:var(--accent);display:inline-block;"></span> 셀프밸런스 랩</div>
+    <nav aria-label="하단">
+      <a href="index.html">랩 시작하기</a>
+      <a href="#features">주요 기능</a>
+      <a href="#how">사용 방법</a>
+      <a href="#pricing">가격</a>
     </nav>
-    <p class="fine">SelfBalance Lab is a browser-based robotics creator space — a real DC-circuit solver and physics sim in a friendly, zero-install lab. Built for makers, students, and the robotics-curious.</p>
+    <p class="fine">셀프밸런스 랩은 브라우저 기반 로봇 공작 공간입니다 — 실제 DC 회로 해석기와 물리 시뮬레이션을 친근하고 설치 없는 랩에 담아 메이커, 학생, 로봇에 호기심을 가진 분들을 위해 만들었습니다.</p>
   </div>
 </footer>
 

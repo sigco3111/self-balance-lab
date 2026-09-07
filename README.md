@@ -13,6 +13,19 @@
 
 ---
 
+
+
+### ⚠️ 헤파이스토스(Gemini 어시스턴트)의 동작 환경
+
+| 배포 환경 | 헤파이스토스 동작 여부 |
+|---|---|
+| **Vercel** (원본 `selfbalance-lab.vercel.app`) | ✅ 정상 — `/api/hephaestus` Edge Function + Gemini API 키 |
+| **GitHub Pages** (이 sigco3111 fork) | ⚠️ 정적 호스팅이라 Edge Function을 실행할 수 없습니다. 앱은 자동으로 안내문을 표시하고 입력·전송을 비활성화해 **405 오류가 더 이상 발생하지 않습니다**. |
+
+GitHub Pages는 정적 파일만 호스팅하므로 **`api/hephaestus.js`(Vercel Edge Function)** 를 실행할 수 없습니다. 대신 클라이언트는 부팅 시 한 번 가용성을 자동 점검합니다(`assets/api-status.json` 마커 + HEAD 요청). 정적 호스팅으로 판정되면 입력 칩과 전송 버튼을 비활성화하고 안내문으로 교체합니다. 다른 정적 호스트에도 동일하게 동작합니다.
+
+**헤파이스토스를 포함한 전체 기능을 사용하려면** 원본 Vercel 배포판을 이용해 주세요: <https://selfbalance-lab.vercel.app/>
+
 ## 🚀 30초 만에 시작
 
 설치나 가입, 다운로드가 없습니다. 그저 여세요:

@@ -1,0 +1,6 @@
+{
+  "hephaestus": false,
+  "reason": "GitHub Pages 정적 호스팅은 Vercel Edge Function을 실행할 수 없습니다. 빌드와 시뮬레이션은 정상이지만 헤파이스토스 AI 어시스턴트는 Vercel 배포판에서만 동작합니다.",
+  "hosted_on": "github-pages",
+  "see_also": "https://github.com/sigco3111/self-balance-lab#readme"
+}

@@ -19,6 +19,35 @@ const MAX_STEPS = 8;          // 사용자 메시지당 모델 턴 수 (도구 �
 const FREE_DAILY = 25;        // 브라우저당 하루 무료/익명 메시지
 const USAGE_KEY = 'sbl-hephaestus-usage';
 
+// 정적 호스팅(GitHub Pages, 일반 S3 등)과 Edge Function 호스팅(Vercel)을 자동으로 구분.
+// Pages는 정적 파일만 제공하므로 `/api/hephaestus`는 404를 반환하고 호출은 405로 거절됨.
+// 클라이언트가 헤드 요청을 보내 응답 코드로 호스팅 종류를 판단:
+//   * 404 → 정적 호스팅(Pages) → 어시스턴트 비활성 안내
+//   * 그 외(200/405/503 등) → Edge Function 호스팅 → 정상 시도
+// `assets/api-status.json` 마커도 함께 가져와(있으면 명시적 플래그 사용) 호스트 측 판단 우선.
+const probeApiAvailability = async () => {
+  try {
+    const meta = await fetch('./assets/api-status.json', { cache: 'no-cache' });
+    if (meta.ok) {
+      const j = await meta.json().catch(() => null);
+      if (j && typeof j.hephaestus === 'boolean') {
+        return { available: j.hephaestus, reason: j.reason || '' };
+      }
+    }
+  } catch { /* 마커가 없거나 CORS로 막힘 — 헤드 요청으로 폴백 */ }
+  try {
+    const res = await fetch(ENDPOINT, { method: 'HEAD', cache: 'no-cache' });
+    // Vercel Edge 함수는 OPTIONS/GET 없는 HEAD에 405를 줄 수 있지만 404는 Pages의 시그니처.
+    // 404라면 정적 호스팅이라고 보고 비활성; 405 이상이면 Edge가 살아 있다고 보고 활성 시도.
+    return {
+      available: res.status !== 404,
+      reason: res.status === 404 ? 'static-host' : `edge-${res.status}`,
+    };
+  } catch {
+    return { available: false, reason: 'network-error' };
+  }
+};
+
 // 한 번 누르면 시작 — 헤파이스토스가 전체를 만들 수 있음을 예시로 보여 주는
 // 몇 가지 시작 프롬프트입니다 — 빈 작업대를 가장 빠르게 지나가는 길.
 const EXAMPLE_PROMPTS = [
@@ -28,7 +57,7 @@ const EXAMPLE_PROMPTS = [
   '다 연결하고 실행해 줘',
 ];
 
-export function initHephaestus({ api, onFlash, getTier, onUpgrade } = {}) {
+export async function initHephaestus({ api, onFlash, getTier, onUpgrade } = {}) {
   const form = document.getElementById('hephaestus-form');
   const input = document.getElementById('hephaestus-input');
   const log = document.getElementById('hephaestus-log');
@@ -36,6 +65,34 @@ export function initHephaestus({ api, onFlash, getTier, onUpgrade } = {}) {
 
   const contents = [];   // Gemini 메시지 이력 (사용자/모델 턴)
   let busy = false;
+
+  // 비활성 모드(정적 호스팅)인 동안 입력과 폼을 막고 안내 메시지를 보여 줌.
+  // 사용자가 메시지를 보내도 네트워크 호출이 일어나지 않아 405가 뜨지 않는다.
+  const availability = await probeApiAvailability();
+  if (!availability.available) {
+    input.disabled = true;
+    input.placeholder = '이 배포판에서는 어시스턴트를 사용할 수 없어요';
+    form.querySelector('button[type="submit"]')?.setAttribute('disabled', 'disabled');
+    log.innerHTML = '';
+    const note = document.createElement('div');
+    note.className = 'hp-msg hp-bot hp-disabled-note';
+    const reason = availability.reason === 'static-host'
+      ? 'GitHub Pages는 정적 호스팅이라 Vercel Edge Function을 실행할 수 없습니다. 어시스턴트는 Vercel 배포판에서만 동작해요.'
+      : `헤파이스토스 백엔드에 연결할 수 없어요 (${availability.reason}). 잠시 후 다시 시도해 보세요.`;
+    note.textContent = reason;
+    log.appendChild(note);
+    const link = document.createElement('div');
+    link.className = 'hp-msg hp-bot hp-disabled-link';
+    link.innerHTML = '원본 배포판(Vercel)에서는 어시스턴트가 정상 동작합니다 — <a href="https://selfbalance-lab.vercel.app/" target="_blank" rel="noopener">selfbalance-lab.vercel.app</a>에서 사용해 보세요.';
+    log.appendChild(link);
+    try { input.form?.addEventListener('submit', (e) => e.preventDefault()); } catch {}
+    // 비활성 모드에서 호출되는 send는 항상 false; 네트워크 요청 없음.
+    return {
+      send: async () => {
+        return { ok: false, disabled: true };
+      },
+    };
+  }
 
   function bubble(who, text) {
     const el = document.createElement('div');

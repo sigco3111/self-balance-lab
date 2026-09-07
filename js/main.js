@@ -283,7 +283,9 @@ const coach = coldOpened ? null : initCoach(api);
 // Free/anon users are quota-capped (protects the shared Gemini free key); pro
 // (profiles.tier) is uncapped. currentTier is updated on sign-in below.
 let currentTier = 'free';
-const hephaestus = initHephaestus({
+// 헤파이스토스 init은 비동기 — 백엔드 가용성(정적 호스팅 vs Edge Function)을 부팅 시 한 번 확인.
+// 정적 호스팅이면 입력·버튼을 비활성화하고 안내문을 띄우므로 405가 더 이상 보이지 않음.
+const hephaestus = await initHephaestus({
   api,
   onFlash: (m, k) => hud.flash(m, k),
   getTier: () => currentTier,

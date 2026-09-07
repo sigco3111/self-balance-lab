@@ -1710,3 +1710,20 @@ body { font-size: 14px; letter-spacing: 0; }
   body.is-phone #hephaestus-log { flex: 1 1 auto; }
   body.is-phone #run-tools { display: contents; }
 }
+
+
+/* --- Hephaestus disabled state (static-host deployments like GitHub Pages) --- */
+#hephaestus-panel .hp-disabled-note {
+  background: var(--panel-2, rgba(245,245,247,.6));
+  border: 1px solid var(--border, rgba(0,0,0,.08));
+  color: var(--text, #1b1e22);
+  font-size: 12px; line-height: 1.55; padding: 10px 12px; border-radius: 10px;
+  margin: 6px 0;
+}
+#hephaestus-panel .hp-disabled-link a {
+  color: var(--accent, #3d5a8f); text-decoration: none;
+  border-bottom: 1px dashed currentColor;
+}
+#hephaestus-panel .hp-disabled-link a:hover { color: var(--accent-2, #2c4480); }
+#hephaestus-input:disabled { opacity: .55; cursor: not-allowed; }
+#hephaestus-panel button[type="submit"][disabled] { opacity: .5; cursor: not-allowed; }
